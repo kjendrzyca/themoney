@@ -5,30 +5,25 @@ function moneyFactory () {
     add: (entry) => {
       state = {
         ...state,
-        [entry.category]: mergeCategory(state, entry)
+        [entry.category]: mergeCategory(state[entry.category], entry)
       }
     },
     getAll: () => state
   }
 }
 
-function mergeCategory (state, entry) {
+function mergeCategory (categoryState = {}, entry) {
   return {
-    ...state[entry.category],
-    [entry.name]: mergeEntry(state, entry)
+    ...categoryState,
+    [entry.name]: mergeEntry(categoryState[entry.name], entry)
   }
 }
 
-function mergeEntry (state, entry) {
-  const alreadyExistingPayment = state[entry.category] && state[entry.category][entry.name]
-
-  if (alreadyExistingPayment) {
-    return [
-      ...alreadyExistingPayment,
-      entry.price
-    ]
-  }
-  return [entry.price]
+function mergeEntry (entryState = [], entry) {
+  return [
+    ...entryState,
+    entry.price
+  ]
 }
 
 export default moneyFactory
