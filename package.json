@@ -4,7 +4,7 @@
   "description": "opinionated money management",
   "main": "index.js",
   "scripts": {
-    "test": "tape -r babel-register money.test.js | faucet"
+    "test": "tape -r babel-register money.test.js"
   },
   "keywords": [
     "money",
@@ -21,7 +21,6 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^2.1.1",
-    "faucet": "0.0.1",
     "tape": "^4.6.3"
   }
 }
