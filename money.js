@@ -20,12 +20,15 @@ function mergeCategory (state, entry) {
 }
 
 function mergeEntry (state, entry) {
-  const alreadyExistingPrice = state[entry.category] && state[entry.category][entry.name]
+  const alreadyExistingPayment = state[entry.category] && state[entry.category][entry.name]
 
-  if (alreadyExistingPrice) {
-    return alreadyExistingPrice + entry.price
+  if (alreadyExistingPayment) {
+    return [
+      ...alreadyExistingPayment,
+      entry.price
+    ]
   }
-  return entry.price
+  return [entry.price]
 }
 
 export default moneyFactory

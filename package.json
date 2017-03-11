@@ -4,7 +4,7 @@
   "description": "opinionated money management",
   "main": "index.js",
   "scripts": {
-    "test": "tape -r babel-register money.test.js"
+    "test": "tape -r babel-register money.test.js | colortape"
   },
   "keywords": [
     "money",
@@ -16,6 +16,7 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-3": "^6.22.0",
     "babel-register": "^6.23.0",
+    "colortape": "^0.1.2",
     "eslint": "^3.17.1",
     "eslint-config-standard": "^7.0.1",
     "eslint-plugin-import": "^2.2.0",
