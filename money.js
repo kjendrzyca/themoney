@@ -12,7 +12,7 @@ function moneyFactory () {
     getRepresentation: () => {
       return Object.keys(state).map(categoryKey => {
         const entries = Object.keys(state[categoryKey]).map(entryKey => {
-          const total = state[categoryKey][entryKey].reduce((sum, val) => sum + val, 0)
+          const total = state[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
           return {[entryKey]: total}
         }).reduce((acc, entry) => {
           return {
@@ -44,7 +44,7 @@ function mergeCategory (categoryState = {}, entry) {
 function mergeEntry (entryState = [], entry) {
   return [
     ...entryState,
-    entry.price
+    {payment: entry.price, type: entry.type}
   ]
 }
 
