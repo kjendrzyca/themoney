@@ -73,7 +73,22 @@ function getRepresentation (state) {
     return acc
   }, {})
 
-  return {byCategory, byEntryType}
+  const calculateTotal = groupedState => Object.keys(groupedState).reduce((acc, type) => {
+    const groupForType = groupedState[type]
+    const calculated = Object.keys(groupForType)
+      .map(objectKey => groupForType[objectKey])
+      .reduce((sum, val) => sum + val, 0)
+
+    return {
+      ...acc,
+      [type]: calculated
+    }
+  }, {})
+
+  const byEntryTypeTotal = calculateTotal(byEntryType)
+  const byCategoryTotal = calculateTotal(byCategory)
+
+  return {byCategory, byEntryType, byEntryTypeTotal, byCategoryTotal}
 }
 
 export default moneyFactory
