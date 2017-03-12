@@ -4,7 +4,8 @@
   "description": "opinionated money management",
   "main": "index.js",
   "scripts": {
-    "test": "tape -r babel-register money.test.js | colortape"
+    "test": "tape -r babel-register money.test.js | colortape",
+    "test:watch": "tape-watch -r babel-register money.test.js -o '| colortape'"
   },
   "keywords": [
     "money",
@@ -22,6 +23,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^2.1.1",
-    "tape": "^4.6.3"
+    "tape": "^4.6.3",
+    "tape-watch": "^2.2.4"
   }
 }

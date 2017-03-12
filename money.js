@@ -9,28 +9,7 @@ function moneyFactory () {
       }
     },
     getAll: () => state,
-    getRepresentation: () => {
-      return Object.keys(state).map(categoryKey => {
-        const entries = Object.keys(state[categoryKey]).map(entryKey => {
-          const total = state[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
-          return {[entryKey]: total}
-        }).reduce((acc, entry) => {
-          return {
-            ...acc,
-            ...entry
-          }
-        }, {})
-
-        return {
-          [categoryKey]: entries
-        }
-      }).reduce((acc, entry) => {
-        return {
-          ...acc,
-          ...entry
-        }
-      }, {})
-    }
+    getRepresentation: () => getRepresentation(state)
   }
 }
 
@@ -46,6 +25,55 @@ function mergeEntry (entryState = [], entry) {
     ...entryState,
     {payment: entry.price, type: entry.type}
   ]
+}
+
+function getRepresentation (state) {
+  const byCategory = Object.keys(state).map(categoryKey => {
+    const entries = Object.keys(state[categoryKey]).map(entryKey => {
+      const total = state[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
+      return {[entryKey]: total}
+    }).reduce((acc, entry) => {
+      return {
+        ...acc,
+        ...entry
+      }
+    }, {})
+
+    return {
+      [categoryKey]: entries
+    }
+  }).reduce((acc, entry) => {
+    return {
+      ...acc,
+      ...entry
+    }
+  }, {})
+
+  const flattenedWithoutCategory = Object.keys(state)
+    .map(categoryKey => state[categoryKey])
+    .reduce((acc, entry) => {
+      return {
+        ...acc,
+        ...entry
+      }
+    }, {})
+
+  const byEntryType = Object.keys(flattenedWithoutCategory).reduce((acc, entryKey) => {
+    const flattened = flattenedWithoutCategory[entryKey].map(entryPayment => ({entryKey, ...entryPayment}))
+
+    flattened.forEach(flattenedEntry => {
+      if (!acc[flattenedEntry.type]) {
+        acc[flattenedEntry.type] = {}
+      }
+
+      acc[flattenedEntry.type][flattenedEntry.entryKey] =
+        (acc[flattenedEntry.type][flattenedEntry.entryKey] || 0) + flattenedEntry.payment
+    })
+
+    return acc
+  }, {})
+
+  return {byCategory, byEntryType}
 }
 
 export default moneyFactory

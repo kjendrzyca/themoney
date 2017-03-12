@@ -61,17 +61,41 @@ t.test('money', (st) => {
 })
 
 t.test('money representation', (st) => {
-  st.test('should represent total payment', (assert) => {
+  st.test('should group by category with calculated total payment', (assert) => {
     const money = moneyFactory()
     money.add(entry('grocery', 'kiwi', 5))
     money.add(entry('grocery', 'kiwi', 12))
     money.add(entry('grocery', 'tomato', 5))
 
-    const actual = money.getRepresentation()
+    const actual = money.getRepresentation()['byCategory']
     const expected = {
       grocery: {
         kiwi: 17,
         tomato: 5
+      }
+    }
+
+    assert.deepEqual(actual, expected)
+    assert.end()
+  })
+
+  st.test('should group by entry type with calculated total payment', (assert) => {
+    const money = moneyFactory()
+    money.add(entry('grocery', 'kiwi', 5, EntryTypes.FIXED))
+    money.add(entry('grocery', 'kiwi', 12, EntryTypes.FIXED))
+    money.add(entry('grocery', 'kiwi', 512, EntryTypes.ONE_TIME))
+    money.add(entry('stuff', 'ps4pro', 400, EntryTypes.ONE_TIME))
+    money.add(entry('stuff', 'tv', 1100, EntryTypes.ONE_TIME))
+
+    const actual = money.getRepresentation()['byEntryType']
+    const expected = {
+      [EntryTypes.FIXED]: {
+        kiwi: 17
+      },
+      [EntryTypes.ONE_TIME]: {
+        ps4pro: 400,
+        tv: 1100,
+        kiwi: 512
       }
     }
 
