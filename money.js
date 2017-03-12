@@ -1,14 +1,17 @@
-function moneyFactory () {
-  let state = {}
+function moneyFactory (revenue = 0) {
+  const state = {
+    revenue,
+    groupsState: {}
+  }
 
   return {
     add: (entry) => {
-      state = {
-        ...state,
-        [entry.category]: mergeCategory(state[entry.category], entry)
+      state.groupsState = {
+        ...state.groupsState,
+        [entry.category]: mergeCategory(state.groupsState[entry.category], entry)
       }
     },
-    getAll: () => state,
+    getAll: () => state.groupsState,
     getRepresentation: () => getRepresentation(state)
   }
 }
@@ -27,10 +30,10 @@ function mergeEntry (entryState = [], entry) {
   ]
 }
 
-function getRepresentation (state) {
-  const byCategory = Object.keys(state).map(categoryKey => {
-    const entries = Object.keys(state[categoryKey]).map(entryKey => {
-      const total = state[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
+function getRepresentation ({groupsState, revenue}) {
+  const byCategory = Object.keys(groupsState).map(categoryKey => {
+    const entries = Object.keys(groupsState[categoryKey]).map(entryKey => {
+      const total = groupsState[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
       return {[entryKey]: total}
     }).reduce((acc, entry) => {
       return {
@@ -49,8 +52,8 @@ function getRepresentation (state) {
     }
   }, {})
 
-  const flattenedWithoutCategory = Object.keys(state)
-    .map(categoryKey => state[categoryKey])
+  const flattenedWithoutCategory = Object.keys(groupsState)
+    .map(categoryKey => groupsState[categoryKey])
     .reduce((acc, entry) => {
       return {
         ...acc,
@@ -87,8 +90,16 @@ function getRepresentation (state) {
 
   const byEntryTypeTotal = calculateTotal(byEntryType)
   const byCategoryTotal = calculateTotal(byCategory)
+  const savings = revenue - byEntryTypeTotal.FIXED - byEntryTypeTotal.ONE_TIME
 
-  return {byCategory, byEntryType, byEntryTypeTotal, byCategoryTotal}
+  return {
+    byCategory,
+    byEntryType,
+    byEntryTypeTotal,
+    byCategoryTotal,
+    revenue,
+    savings
+  }
 }
 
 export default moneyFactory

@@ -78,6 +78,7 @@ t.test('money representation', (st) => {
     assert.deepEqual(actual, expected)
     assert.end()
   })
+
   st.test('should calculate total per group by category', (assert) => {
     const money = moneyFactory()
     money.add(entry('grocery', 'kiwi', 5, EntryTypes.FIXED))
@@ -133,6 +134,26 @@ t.test('money representation', (st) => {
       [EntryTypes.FIXED]: 5 + 12,
       [EntryTypes.ONE_TIME]: 512 + 400 + 1100
     }
+
+    assert.deepEqual(actual, expected)
+    assert.end()
+  })
+
+  st.test('should save revenue', (assert) => {
+    assert.equal(moneyFactory(5000).getRepresentation().revenue, 5000)
+    assert.end()
+  })
+
+  st.test('should calculate savings', (assert) => {
+    const money = moneyFactory(5000)
+    money.add(entry('grocery', 'kiwi', 5, EntryTypes.FIXED))
+    money.add(entry('grocery', 'kiwi', 12, EntryTypes.FIXED))
+    money.add(entry('grocery', 'kiwi', 512, EntryTypes.ONE_TIME))
+    money.add(entry('stuff', 'ps4pro', 400, EntryTypes.ONE_TIME))
+    money.add(entry('stuff', 'tv', 1100, EntryTypes.ONE_TIME))
+
+    const actual = money.getRepresentation()['savings']
+    const expected = 5000 - (5 + 12 + 512 + 400 + 1100)
 
     assert.deepEqual(actual, expected)
     assert.end()
