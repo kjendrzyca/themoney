@@ -90,7 +90,8 @@ function getRepresentation ({groupsState, revenue}) {
 
   const byEntryTypeTotal = calculateTotal(byEntryType)
   const byCategoryTotal = calculateTotal(byCategory)
-  const savings = revenue - byEntryTypeTotal.FIXED - byEntryTypeTotal.ONE_TIME
+  const expenses = byEntryTypeTotal.FIXED + byEntryTypeTotal.ONE_TIME
+  const savings = revenue - expenses
 
   return {
     byCategory,
@@ -98,6 +99,7 @@ function getRepresentation ({groupsState, revenue}) {
     byEntryTypeTotal,
     byCategoryTotal,
     revenue,
+    expenses,
     savings
   }
 }
