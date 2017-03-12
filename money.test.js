@@ -6,9 +6,8 @@ const entry = (category, name, price) => ({ category, name, price })
 t.test('money', (st) => {
   st.test('should add single entry to the category', (assert) => {
     const money = moneyFactory()
-    const singleEntry = entry('grocery', 'tomato', 5)
+    money.add(entry('grocery', 'tomato', 5))
 
-    money.add(singleEntry)
     const actual = money.getAll()
     const expected = {
       grocery: {
@@ -43,6 +42,28 @@ t.test('money', (st) => {
     const actual = money.getAll()['grocery']
     const expected = {
       kiwi: [5, 12]
+    }
+
+    assert.deepEqual(actual, expected)
+    assert.end()
+  })
+
+  // TODO test for multiple categories just to be sure
+})
+
+t.test('money representation', (st) => {
+  st.test('should represent total payment', (assert) => {
+    const money = moneyFactory()
+    money.add(entry('grocery', 'kiwi', 5))
+    money.add(entry('grocery', 'kiwi', 12))
+    money.add(entry('grocery', 'tomato', 5))
+
+    const actual = money.getRepresentation()
+    const expected = {
+      grocery: {
+        kiwi: 17,
+        tomato: 5
+      }
     }
 
     assert.deepEqual(actual, expected)
