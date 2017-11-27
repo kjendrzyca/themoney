@@ -1,32 +1,32 @@
 function moneyFactory (revenue = 0) {
   const state = {
     revenue,
-    groupsState: {}
+    groupsState: {},
   }
 
   return {
     add: (entry) => {
       state.groupsState = {
         ...state.groupsState,
-        [entry.category]: mergeCategory(state.groupsState[entry.category], entry)
+        [entry.category]: mergeCategory(state.groupsState[entry.category], entry),
       }
     },
     getAll: () => state.groupsState,
-    getRepresentation: () => getRepresentation(state)
+    getRepresentation: () => getRepresentation(state),
   }
 }
 
 function mergeCategory (categoryState = {}, entry) {
   return {
     ...categoryState,
-    [entry.name]: mergeEntry(categoryState[entry.name], entry)
+    [entry.name]: mergeEntry(categoryState[entry.name], entry),
   }
 }
 
 function mergeEntry (entryState = [], entry) {
   return [
     ...entryState,
-    {payment: entry.price, type: entry.type}
+    {payment: entry.price, type: entry.type},
   ]
 }
 
@@ -38,17 +38,17 @@ function getRepresentation ({groupsState, revenue}) {
     }).reduce((acc, entry) => {
       return {
         ...acc,
-        ...entry
+        ...entry,
       }
     }, {})
 
     return {
-      [categoryKey]: entries
+      [categoryKey]: entries,
     }
   }).reduce((acc, entry) => {
     return {
       ...acc,
-      ...entry
+      ...entry,
     }
   }, {})
 
@@ -57,7 +57,7 @@ function getRepresentation ({groupsState, revenue}) {
     .reduce((acc, entry) => {
       return {
         ...acc,
-        ...entry
+        ...entry,
       }
     }, {})
 
@@ -84,7 +84,7 @@ function getRepresentation ({groupsState, revenue}) {
 
     return {
       ...acc,
-      [type]: calculated
+      [type]: calculated,
     }
   }, {})
 
@@ -100,7 +100,7 @@ function getRepresentation ({groupsState, revenue}) {
     byCategoryTotal,
     revenue,
     expenses,
-    savings
+    savings,
   }
 }
 
