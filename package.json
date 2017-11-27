@@ -1,7 +1,7 @@
 {
   "name": "themoney",
   "version": "0.1.0",
-  "description": "opinionated money management",
+  "description": "Opinionated money management",
   "main": "index.js",
   "scripts": {
     "test": "tape -r babel-register money.test.js | colortape",
