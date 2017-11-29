@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
-import './App.css';
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap'
+
+import './App.css'
+
+import MoneyList from './MoneyList.js'
 
 class App extends Component {
   state = {
@@ -34,6 +37,7 @@ class App extends Component {
             </Nav>
           </Collapse>
         </Navbar>
+        <MoneyList />
       </div>
     );
   }
