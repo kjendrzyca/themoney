@@ -1,4 +1,6 @@
-function moneyFactory (revenue = 0) {
+const noDataAddedTo = state => !state || !state.groupsState || state.revenue === undefined
+
+function moneyFactory (initialState = {}) {
   // example state
   // const state = {
   //   '2017-11': {
@@ -10,7 +12,7 @@ function moneyFactory (revenue = 0) {
   //   }
   // }
 
-  const state = {}
+  const state = initialState
 
   return {
     add: entry => {
@@ -18,7 +20,16 @@ function moneyFactory (revenue = 0) {
       if (!state[`${entry.year}-${entry.month}`]) {
         state[`${entry.year}-${entry.month}`] = {
           groupsState: {},
+          revenue: 0,
         }
+      }
+
+      if (!state[`${entry.year}-${entry.month}`].groupsState) {
+        state[`${entry.year}-${entry.month}`].groupsState = {}
+      }
+
+      if (state[`${entry.year}-${entry.month}`].revenue === undefined) {
+        state[`${entry.year}-${entry.month}`].revenue = 0
       }
 
       const previousState = state[`${entry.year}-${entry.month}`]
@@ -31,7 +42,13 @@ function moneyFactory (revenue = 0) {
       previousState.groupsState = newGroupsState
     },
     getAll: (year, month) => state[`${year}-${month}`].groupsState,
-    getRepresentation: (year, month) => getRepresentation(year, month, state[`${year}-${month}`]),
+    getRepresentation: (year, month) => {
+      if (noDataAddedTo(state[`${year}-${month}`])) {
+        throw new Error('Add some entries or import data first!')
+      }
+
+      return getRepresentation(state[`${year}-${month}`])
+    },
   }
 }
 
@@ -49,9 +66,8 @@ function mergeEntry (entryState = [], entry) {
   ]
 }
 
-function getRepresentation (year, month, {groupsState, revenue}) {
+function getRepresentation ({groupsState, revenue}) {
   const groupsStateByDate = groupsState
-  console.log('groupsStateByDate', groupsStateByDate)
 
   const byCategory = Object.keys(groupsStateByDate).map(categoryKey => {
     const entries = Object.keys(groupsStateByDate[categoryKey]).map(entryKey => {

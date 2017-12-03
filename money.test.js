@@ -3,6 +3,7 @@ import moneyFactory from './money'
 
 const DEFAULT_YEAR = '2017'
 const DEFAULT_MONTH = '11'
+const DEFAULT_DATE = '2017-11'
 
 const entry = (
   category,
@@ -31,7 +32,7 @@ const Categories = {
 }
 
 t.test('money', (st) => {
-  st.test('should add single entry to the category', (assert) => {
+  st.test('should add single entry to the category', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED))
     money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
@@ -50,7 +51,7 @@ t.test('money', (st) => {
     assert.end()
   })
 
-  st.test('should add two single entries to the same category', (assert) => {
+  st.test('should add two single entries to the same category', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.ONE_TIME))
     money.add(entry(Categories.GROCERY, 'potato', 10, EntryTypes.ONE_TIME))
@@ -65,7 +66,7 @@ t.test('money', (st) => {
     assert.end()
   })
 
-  st.test('should make array of two entries with the same name', (assert) => {
+  st.test('should make array of two entries with the same name', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.ONE_TIME))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.ONE_TIME))
@@ -84,7 +85,7 @@ t.test('money', (st) => {
 })
 
 t.test('money representation', (st) => {
-  st.test('should group by category with calculated total payment', (assert) => {
+  st.test('should group by category with calculated total payment', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5))
     money.add(entry(Categories.GROCERY, 'kiwi', 12))
@@ -102,7 +103,7 @@ t.test('money representation', (st) => {
     assert.end()
   })
 
-  st.test('should calculate total per group by category', (assert) => {
+  st.test('should calculate total per group by category', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -120,7 +121,7 @@ t.test('money representation', (st) => {
     assert.end()
   })
 
-  st.test('should group by entry type with calculated total payment', (assert) => {
+  st.test('should group by entry type with calculated total payment', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -144,7 +145,7 @@ t.test('money representation', (st) => {
     assert.end()
   })
 
-  st.test('should calculate total per group by entry', (assert) => {
+  st.test('should calculate total per group by entry', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -162,28 +163,46 @@ t.test('money representation', (st) => {
     assert.end()
   })
 
-  // st.test('should save revenue', (assert) => {
-  //   const themoney = moneyFactory(5000).getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
-  //   console.log('the money', themoney)
-  //   assert.equal(themoney.revenue, 5000)
-  //   assert.end()
-  // })
+  st.test('should throw error when no data is added', assert => {
+    const gettingRepresentation = () => moneyFactory({
+      '2017-11': {
+        revenue: 5000,
+      },
+    }).getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+    assert.throws(gettingRepresentation, /Add some entries or import data first!/)
+    assert.end()
+  })
 
-  // st.test('should calculate savings and expenses', (assert) => {
-  //   const money = moneyFactory(5000)
-  //   money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
-  //   money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
-  //   money.add(entry(Categories.GROCERY, 'kiwi', 512, EntryTypes.ONE_TIME))
-  //   money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
-  //   money.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
+  st.test('should save revenue', assert => {
+    const money = moneyFactory({
+      [DEFAULT_DATE]: {
+        revenue: 5000,
+      },
+    })
+    money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
+    assert.equal(money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH).revenue, 5000)
+    assert.end()
+  })
 
-  //   const actualExpenses = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['expenses']
-  //   const expectedExpenses = 5 + 12 + 512 + 400 + 1100
-  //   const actualSavings = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['savings']
-  //   const expectedSavings = 5000 - expectedExpenses
+  st.test('should calculate savings and expenses', assert => {
+    const money = moneyFactory({
+      [DEFAULT_DATE]: {
+        revenue: 5000,
+      },
+    })
+    money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
+    money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
+    money.add(entry(Categories.GROCERY, 'kiwi', 512, EntryTypes.ONE_TIME))
+    money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
+    money.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
 
-  //   assert.equal(actualExpenses, expectedExpenses)
-  //   assert.equal(actualSavings, expectedSavings)
-  //   assert.end()
-  // })
+    const actualExpenses = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['expenses']
+    const expectedExpenses = 5 + 12 + 512 + 400 + 1100
+    const actualSavings = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['savings']
+    const expectedSavings = 5000 - expectedExpenses
+
+    assert.equal(actualExpenses, expectedExpenses)
+    assert.equal(actualSavings, expectedSavings)
+    assert.end()
+  })
 })
