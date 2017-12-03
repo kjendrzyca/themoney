@@ -1,9 +1,16 @@
 import moneyFactory from './money';
 
-const initialRevenue = 5000;
-const theMoney = moneyFactory(initialRevenue);
+export const YEAR = 2017
+export const MONTH = 11
 
-const entry = (category, name, price, type) => ({ category, name, price, type })
+const initialRevenue = 5000;
+const theMoney = moneyFactory({
+  [`${YEAR}-${MONTH}`]: {
+    revenue: initialRevenue,
+  }
+});
+
+export const entry = (category, name, price, type) => ({ category, name, price, type, year: YEAR, month: MONTH })
 const EntryTypes = {
   ONE_TIME: 'ONE_TIME',
   FIXED: 'FIXED',

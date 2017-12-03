@@ -4,9 +4,9 @@ import {
 } from 'reactstrap'
 
 import NewEntry from './NewEntry'
-import moneyInstance from './moneySetup.js'
+import moneyInstance, { entry as entryFactory, YEAR, MONTH } from './moneySetup.js'
 
-const moneyRepresentation = moneyInstance.getRepresentation()
+const moneyRepresentation = moneyInstance.getRepresentation(YEAR, MONTH)
 console.log('MONEY REPRESENTATION', moneyRepresentation)
 
 class MoneyList extends Component {
@@ -16,9 +16,10 @@ class MoneyList extends Component {
 
   addEntry = entry => {
     console.log('entry', entry)
-    moneyInstance.add(entry)
+    const { category, name, price, type } = entry
+    moneyInstance.add(entryFactory(category, name, price, type))
     this.setState({
-      representation: moneyInstance.getRepresentation()
+      representation: moneyInstance.getRepresentation(YEAR, MONTH)
     })
   }
 
