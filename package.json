@@ -4,7 +4,7 @@
   "description": "Opinionated money management",
   "main": "index.js",
   "scripts": {
-    "test": "tape -r babel-register money.test.js | colortape",
+    "test": "tape -r babel-register money.test.js | colortape && cd client && CI=1 yarn test",
     "test:watch": "tape-watch -r babel-register money.test.js -o '| colortape'"
   },
   "keywords": [
