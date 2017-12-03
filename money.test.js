@@ -220,4 +220,25 @@ t.test('money representation', (st) => {
     assert.equal(actualSavings, expectedSavings)
     assert.end()
   })
+
+  st.test('should provide standard entry types', assert => {
+    const money = moneyFactory()
+    assert.deepEqual(money.entryTypes, {
+      FIXED: 'FIXED',
+      ONE_TIME: 'ONE_TIME',
+    })
+    assert.end()
+  })
+
+  st.test('should add custom entry types', assert => {
+    const money = moneyFactory({}, {
+      RARE: 'RARE',
+    })
+    assert.deepEqual(money.entryTypes, {
+      RARE: 'RARE',
+      FIXED: 'FIXED',
+      ONE_TIME: 'ONE_TIME',
+    })
+    assert.end()
+  })
 })

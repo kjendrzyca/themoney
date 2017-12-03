@@ -1,6 +1,6 @@
 const noDataAddedTo = state => !state || !state.groupsState || state.revenue === undefined
 
-function moneyFactory (initialState = {}) {
+function moneyFactory (initialState = {}, entryTypes) {
   // example state
   // const state = {
   //   '2017-11': {
@@ -53,6 +53,11 @@ function moneyFactory (initialState = {}) {
       }
 
       return getRepresentation(state[`${year}-${month}`])
+    },
+    entryTypes: {
+      ...entryTypes,
+      FIXED: 'FIXED',
+      ONE_TIME: 'ONE_TIME',
     },
   }
 }
