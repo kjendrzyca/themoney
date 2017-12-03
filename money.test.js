@@ -82,6 +82,21 @@ t.test('money', (st) => {
     assert.deepEqual(actual, expected)
     assert.end()
   })
+
+  st.test('should parse price that is a string', assert => {
+    const money = moneyFactory()
+    money.add(entry(Categories.GROCERY, 'tomato', "5", EntryTypes.FIXED))
+
+    const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)
+    const expected = {
+      [Categories.GROCERY]: {
+        tomato: [{payment: 5, type: EntryTypes.FIXED}],
+      },
+    }
+
+    assert.deepEqual(actual, expected)
+    assert.end()
+  })
 })
 
 t.test('money representation', (st) => {

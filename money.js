@@ -32,11 +32,16 @@ function moneyFactory (initialState = {}) {
         state[`${entry.year}-${entry.month}`].revenue = 0
       }
 
-      const previousState = state[`${entry.year}-${entry.month}`]
+      const parsedEntry = {
+        ...entry,
+        price: Number(entry.price),
+      }
+
+      const previousState = state[`${parsedEntry.year}-${parsedEntry.month}`]
 
       const newGroupsState = {
         ...previousState.groupsState,
-        [entry.category]: mergeCategory(previousState.groupsState[entry.category], entry),
+        [parsedEntry.category]: mergeCategory(previousState.groupsState[parsedEntry.category], parsedEntry),
       }
 
       previousState.groupsState = newGroupsState
