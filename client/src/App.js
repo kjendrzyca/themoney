@@ -1,19 +1,23 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
-import './App.css';
+import { Button, Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem } from 'reactstrap'
+
+import './App.css'
+
+import MoneyList from './MoneyList.js'
 
 class App extends Component {
   state = {
-    isOpen: false
+    isOpen: false,
+    filter: 'CATEGORY',
   }
 
-  toggle = () => {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
+  toggle = () => this.setState({ isOpen: !this.state.isOpen });
+
+  filterBy = (filter) => this.setState({ filter })
 
   render() {
+    const { filter } = this.state
+
     return (
       <div className="App">
         <Navbar
@@ -26,14 +30,15 @@ class App extends Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink href="#">By Category</NavLink>
+                <Button color="link" onClick={() => this.filterBy('CATEGORY')}>By Category</Button>
               </NavItem>
               <NavItem>
-                <NavLink href="#">By Type</NavLink>
+                <Button color="link" onClick={() => this.filterBy('TYPE')}>By Type</Button>
               </NavItem>
             </Nav>
           </Collapse>
         </Navbar>
+        <MoneyList filter={filter} />
       </div>
     );
   }
