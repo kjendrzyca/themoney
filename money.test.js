@@ -85,7 +85,7 @@ t.test('money', (st) => {
 
   st.test('should parse price that is a string', assert => {
     const money = moneyFactory()
-    money.add(entry(Categories.GROCERY, 'tomato', "5", EntryTypes.FIXED))
+    money.add(entry(Categories.GROCERY, 'tomato', '5', EntryTypes.FIXED))
 
     const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)
     const expected = {
@@ -178,13 +178,53 @@ t.test('money representation', (st) => {
     assert.end()
   })
 
-  st.test('should throw error when no data is added', assert => {
-    const gettingRepresentation = () => moneyFactory({
+  st.test('should return empty data when nothing is added', assert => {
+    const actual = moneyFactory().getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+    assert.equal(actual.revenue, 0)
+    assert.equal(actual.savings, 0)
+    assert.equal(actual.expenses, 0)
+    assert.deepEqual(actual.byCategory, {})
+    assert.deepEqual(actual.byCategoryTotal, {})
+    assert.deepEqual(actual.byEntryType, {})
+    assert.deepEqual(actual.byEntryTypeTotal, {})
+    assert.end()
+  })
+
+  st.test('should return empty data when only revenue is added', assert => {
+    const actual = moneyFactory({
       '2017-11': {
         revenue: 5000,
       },
     }).getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
-    assert.throws(gettingRepresentation, /Add some entries or import data first!/)
+    assert.equal(actual.revenue, 5000)
+    assert.equal(actual.savings, 5000)
+    assert.equal(actual.expenses, 0)
+    assert.deepEqual(actual.byCategory, {})
+    assert.deepEqual(actual.byCategoryTotal, {})
+    assert.deepEqual(actual.byEntryType, {})
+    assert.deepEqual(actual.byEntryTypeTotal, {})
+    assert.end()
+  })
+
+  st.test('should made correct calculations when only groupState is added', assert => {
+    const actual = moneyFactory({
+      '2017-11': {
+        groupsState: {
+          GROCERY: {
+            kiwi: [{'payment': 5, 'type': 'FIXED'}],
+          },
+        },
+      },
+    }).getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+    assert.equal(actual.revenue, 0)
+    assert.equal(actual.savings, -5)
+    assert.equal(actual.expenses, 5)
+    assert.deepEqual(actual.byCategoryTotal, {
+      GROCERY: 5,
+    })
+    assert.deepEqual(actual.byEntryTypeTotal, {
+      FIXED: 5,
+    })
     assert.end()
   })
 

@@ -1,18 +1,62 @@
-function moneyFactory (revenue = 0) {
-  const state = {
-    revenue,
-    groupsState: {},
-  }
+function moneyFactory (initialState = {}, entryTypes) {
+  // example state
+  // const state = {
+  //   '2017-11': {
+  //     revenue: 5000,
+  //     groupsState: {
+  //       GROCERY: [],
+  //       STUFF: [],
+  //     }
+  //   }
+  // }
+
+  const state = initialState
 
   return {
-    add: (entry) => {
-      state.groupsState = {
-        ...state.groupsState,
-        [entry.category]: mergeCategory(state.groupsState[entry.category], entry),
+    add: entry => {
+      // init state if empty
+      if (!state[`${entry.year}-${entry.month}`]) {
+        state[`${entry.year}-${entry.month}`] = {
+          groupsState: {},
+          revenue: 0,
+        }
       }
+
+      if (!state[`${entry.year}-${entry.month}`].groupsState) {
+        state[`${entry.year}-${entry.month}`].groupsState = {}
+      }
+
+      if (state[`${entry.year}-${entry.month}`].revenue === undefined) {
+        state[`${entry.year}-${entry.month}`].revenue = 0
+      }
+
+      const parsedEntry = {
+        ...entry,
+        price: Number(entry.price),
+      }
+
+      const previousState = state[`${parsedEntry.year}-${parsedEntry.month}`]
+
+      const newGroupsState = {
+        ...previousState.groupsState,
+        [parsedEntry.category]: mergeCategory(previousState.groupsState[parsedEntry.category], parsedEntry),
+      }
+
+      previousState.groupsState = newGroupsState
     },
-    getAll: () => state.groupsState,
-    getRepresentation: () => getRepresentation(state),
+    getAll: (year, month) => state[`${year}-${month}`].groupsState,
+    getRepresentation: (year, month) => {
+      if (!state[`${year}-${month}`]) {
+        return getRepresentation(state[`${year}-${month}`] || {})
+      }
+
+      return getRepresentation(state[`${year}-${month}`])
+    },
+    entryTypes: {
+      ...entryTypes,
+      FIXED: 'FIXED',
+      ONE_TIME: 'ONE_TIME',
+    },
   }
 }
 
@@ -30,7 +74,7 @@ function mergeEntry (entryState = [], entry) {
   ]
 }
 
-function getRepresentation ({groupsState, revenue}) {
+function getRepresentation ({groupsState = {}, revenue = 0}) {
   const byCategory = Object.keys(groupsState).map(categoryKey => {
     const entries = Object.keys(groupsState[categoryKey]).map(entryKey => {
       const total = groupsState[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
@@ -90,8 +134,8 @@ function getRepresentation ({groupsState, revenue}) {
 
   const byEntryTypeTotal = calculateTotal(byEntryType)
   const byCategoryTotal = calculateTotal(byCategory)
-  const expenses = byEntryTypeTotal.FIXED + byEntryTypeTotal.ONE_TIME
-  const savings = revenue - expenses
+  const expenses = (Number(byEntryTypeTotal.FIXED) || 0) + (Number(byEntryTypeTotal.ONE_TIME) || 0)
+  const savings = (revenue - expenses) || 0
 
   return {
     byCategory,

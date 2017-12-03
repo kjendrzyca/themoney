@@ -1,5 +1,3 @@
-const noDataAddedTo = state => !state || !state.groupsState || state.revenue === undefined
-
 function moneyFactory (initialState = {}, entryTypes) {
   // example state
   // const state = {
@@ -48,8 +46,8 @@ function moneyFactory (initialState = {}, entryTypes) {
     },
     getAll: (year, month) => state[`${year}-${month}`].groupsState,
     getRepresentation: (year, month) => {
-      if (noDataAddedTo(state[`${year}-${month}`])) {
-        throw new Error('Add some entries or import data first!')
+      if (!state[`${year}-${month}`]) {
+        return getRepresentation(state[`${year}-${month}`] || {})
       }
 
       return getRepresentation(state[`${year}-${month}`])
@@ -76,12 +74,10 @@ function mergeEntry (entryState = [], entry) {
   ]
 }
 
-function getRepresentation ({groupsState, revenue}) {
-  const groupsStateByDate = groupsState
-
-  const byCategory = Object.keys(groupsStateByDate).map(categoryKey => {
-    const entries = Object.keys(groupsStateByDate[categoryKey]).map(entryKey => {
-      const total = groupsStateByDate[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
+function getRepresentation ({groupsState = {}, revenue = 0}) {
+  const byCategory = Object.keys(groupsState).map(categoryKey => {
+    const entries = Object.keys(groupsState[categoryKey]).map(entryKey => {
+      const total = groupsState[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
       return {[entryKey]: total}
     }).reduce((acc, entry) => {
       return {
@@ -100,8 +96,8 @@ function getRepresentation ({groupsState, revenue}) {
     }
   }, {})
 
-  const flattenedWithoutCategory = Object.keys(groupsStateByDate)
-    .map(categoryKey => groupsStateByDate[categoryKey])
+  const flattenedWithoutCategory = Object.keys(groupsState)
+    .map(categoryKey => groupsState[categoryKey])
     .reduce((acc, entry) => {
       return {
         ...acc,
@@ -138,8 +134,8 @@ function getRepresentation ({groupsState, revenue}) {
 
   const byEntryTypeTotal = calculateTotal(byEntryType)
   const byCategoryTotal = calculateTotal(byCategory)
-  const expenses = byEntryTypeTotal.FIXED + byEntryTypeTotal.ONE_TIME
-  const savings = revenue - expenses
+  const expenses = (Number(byEntryTypeTotal.FIXED) || 0) + (Number(byEntryTypeTotal.ONE_TIME) || 0)
+  const savings = (revenue - expenses) || 0
 
   return {
     byCategory,
