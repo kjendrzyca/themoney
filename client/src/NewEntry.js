@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Form, FormGroup, Input, Label, Button } from 'reactstrap'
+import { Input, Button } from 'reactstrap'
 
 const EntryTypes = {
   ONE_TIME: 'ONE_TIME',

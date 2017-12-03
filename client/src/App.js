@@ -5,12 +5,6 @@ import './App.css'
 
 import MoneyList from './MoneyList.js'
 
-// TODO
-// add entry types getter/setter
-// add categories getter/setter
-// handling different months
-// parse price to number always or throw error
-
 class App extends Component {
   state = {
     isOpen: false,

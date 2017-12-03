@@ -1,18 +1,37 @@
 function moneyFactory (revenue = 0) {
-  const state = {
-    revenue,
-    groupsState: {},
-  }
+  // example state
+  // const state = {
+  //   '2017-11': {
+  //     revenue: 5000,
+  //     groupsState: {
+  //       GROCERY: [],
+  //       STUFF: [],
+  //     }
+  //   }
+  // }
+
+  const state = {}
 
   return {
-    add: (entry) => {
-      state.groupsState = {
-        ...state.groupsState,
-        [entry.category]: mergeCategory(state.groupsState[entry.category], entry),
+    add: entry => {
+      // init state if empty
+      if (!state[`${entry.year}-${entry.month}`]) {
+        state[`${entry.year}-${entry.month}`] = {
+          groupsState: {},
+        }
       }
+
+      const previousState = state[`${entry.year}-${entry.month}`]
+
+      const newGroupsState = {
+        ...previousState.groupsState,
+        [entry.category]: mergeCategory(previousState.groupsState[entry.category], entry),
+      }
+
+      previousState.groupsState = newGroupsState
     },
-    getAll: () => state.groupsState,
-    getRepresentation: () => getRepresentation(state),
+    getAll: (year, month) => state[`${year}-${month}`].groupsState,
+    getRepresentation: (year, month) => getRepresentation(year, month, state[`${year}-${month}`]),
   }
 }
 
@@ -30,10 +49,13 @@ function mergeEntry (entryState = [], entry) {
   ]
 }
 
-function getRepresentation ({groupsState, revenue}) {
-  const byCategory = Object.keys(groupsState).map(categoryKey => {
-    const entries = Object.keys(groupsState[categoryKey]).map(entryKey => {
-      const total = groupsState[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
+function getRepresentation (year, month, {groupsState, revenue}) {
+  const groupsStateByDate = groupsState
+  console.log('groupsStateByDate', groupsStateByDate)
+
+  const byCategory = Object.keys(groupsStateByDate).map(categoryKey => {
+    const entries = Object.keys(groupsStateByDate[categoryKey]).map(entryKey => {
+      const total = groupsStateByDate[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
       return {[entryKey]: total}
     }).reduce((acc, entry) => {
       return {
@@ -52,8 +74,8 @@ function getRepresentation ({groupsState, revenue}) {
     }
   }, {})
 
-  const flattenedWithoutCategory = Object.keys(groupsState)
-    .map(categoryKey => groupsState[categoryKey])
+  const flattenedWithoutCategory = Object.keys(groupsStateByDate)
+    .map(categoryKey => groupsStateByDate[categoryKey])
     .reduce((acc, entry) => {
       return {
         ...acc,
