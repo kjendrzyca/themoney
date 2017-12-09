@@ -10,9 +10,11 @@ const entry = (
   name,
   price,
   type,
+  id = 0,
   month = DEFAULT_MONTH,
   year = DEFAULT_YEAR,
 ) => ({
+  id,
   category,
   name,
   price,
@@ -31,7 +33,7 @@ const Categories = {
   STUFF: 'STUFF',
 }
 
-t.test('money', (st) => {
+t.only('money', (st) => {
   st.test('should add single entry to the category', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED))
@@ -40,10 +42,10 @@ t.test('money', (st) => {
     const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)
     const expected = {
       [Categories.GROCERY]: {
-        tomato: [{payment: 5, type: EntryTypes.FIXED}],
+        tomato: [{id: 0, payment: 5, type: EntryTypes.FIXED}],
       },
       [Categories.STUFF]: {
-        ps4pro: [{payment: 400, type: EntryTypes.ONE_TIME}],
+        ps4pro: [{id: 0, payment: 400, type: EntryTypes.ONE_TIME}],
       },
     }
 
@@ -58,8 +60,8 @@ t.test('money', (st) => {
 
     const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)[Categories.GROCERY]
     const expected = {
-      tomato: [{payment: 5, type: EntryTypes.ONE_TIME}],
-      potato: [{payment: 10, type: EntryTypes.ONE_TIME}],
+      tomato: [{id: 0, payment: 5, type: EntryTypes.ONE_TIME}],
+      potato: [{id: 0, payment: 10, type: EntryTypes.ONE_TIME}],
     }
 
     assert.deepEqual(actual, expected)
@@ -74,8 +76,8 @@ t.test('money', (st) => {
     const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)[Categories.GROCERY]
     const expected = {
       kiwi: [
-        {payment: 5, type: EntryTypes.ONE_TIME},
-        {payment: 12, type: EntryTypes.ONE_TIME},
+        {id: 0, payment: 5, type: EntryTypes.ONE_TIME},
+        {id: 0, payment: 12, type: EntryTypes.ONE_TIME},
       ],
     }
 
@@ -90,8 +92,24 @@ t.test('money', (st) => {
     const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)
     const expected = {
       [Categories.GROCERY]: {
-        tomato: [{payment: 5, type: EntryTypes.FIXED}],
+        tomato: [{id: 0, payment: 5, type: EntryTypes.FIXED}],
       },
+    }
+
+    assert.deepEqual(actual, expected)
+    assert.end()
+  })
+
+  st.test('should remove entry', assert => {
+    const money = moneyFactory()
+    money.add(entry(Categories.GROCERY, 'tomato', '5', EntryTypes.FIXED, 1))
+    money.add(entry(Categories.GROCERY, 'tomato', '8', EntryTypes.FIXED, 2))
+
+    money.remove('tomato', 2, DEFAULT_DATE, Categories.GROCERY)
+
+    const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)[Categories.GROCERY]
+    const expected = {
+      tomato: [{id: 1, payment: 5, type: EntryTypes.FIXED}],
     }
 
     assert.deepEqual(actual, expected)
