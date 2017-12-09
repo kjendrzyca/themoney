@@ -66,6 +66,19 @@ function moneyFactory (initialState = {}, entryTypes) {
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
     },
+    getYearsWithMonths: () => Object.keys(state).reduce((prev, current) => {
+      const [year, month] = current.split('-')
+
+      const nextValue = {
+        ...prev,
+        [year]: [
+          ...(prev[year] || []),
+          month,
+        ],
+      }
+
+      return nextValue
+    }, {}),
   }
 }
 

@@ -33,7 +33,7 @@ const Categories = {
   STUFF: 'STUFF',
 }
 
-t.only('money', (st) => {
+t.test('money', (st) => {
   st.test('should add single entry to the category', assert => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED))
@@ -120,9 +120,9 @@ t.only('money', (st) => {
 t.test('money representation', (st) => {
   st.test('should group by category with calculated total payment', assert => {
     const money = moneyFactory()
-    money.add(entry(Categories.GROCERY, 'kiwi', 5))
-    money.add(entry(Categories.GROCERY, 'kiwi', 12))
-    money.add(entry(Categories.GROCERY, 'tomato', 5))
+    money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
+    money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
+    money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED))
 
     const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['byCategory']
     const expected = {
@@ -297,6 +297,22 @@ t.test('money representation', (st) => {
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
     })
+    assert.end()
+  })
+
+  st.test('should return list of months grouped by year', assert => {
+    const money = moneyFactory()
+    money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED, 1, '01', '2017'))
+    money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED, 2, '02', '2017'))
+    money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED, 3, '12', '2016'))
+
+    const actual = money.getYearsWithMonths()
+    const expected = {
+      2017: ['01', '02'],
+      2016: ['12'],
+    }
+
+    assert.deepEqual(actual, expected)
     assert.end()
   })
 })
