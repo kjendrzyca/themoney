@@ -1,17 +1,21 @@
 import React, { Component } from 'react'
 import {
-  Row, Col,
+  Row, Col, Input
 } from 'reactstrap'
 
 import NewEntry from './NewEntry'
 import moneyInstance, { entry as entryFactory, YEAR, MONTH } from './moneySetup.js'
 
-const moneyRepresentation = moneyInstance.getRepresentation(YEAR, MONTH)
-console.log('MONEY REPRESENTATION', moneyRepresentation)
+const yearsWithMonths = { // get from money
+  2017: [11, 12],
+  2016: [9, 10],
+}
 
 class MoneyList extends Component {
   state = {
-    representation: moneyRepresentation
+    representation: null,
+    chosenYear: '',
+    chosenMonth: '',
   }
 
   addEntry = entry => {
@@ -23,10 +27,35 @@ class MoneyList extends Component {
     })
   }
 
-  getItems = () => {
-    const { filter } = this.props
-    const { representation } = this.state
+  selectDate = event => {
+    const propertyName = event.target.name
+    const propertyValue = event.target.value
 
+    if (propertyName === 'year') {
+      this.setState({
+        chosenYear: propertyValue,
+        chosenMonth: '',
+      })
+
+      return
+    }
+
+    this.setState({
+      chosenMonth: propertyValue,
+    }, () => {
+      const {chosenYear, chosenMonth} = this.state
+
+      const representation = (chosenYear && chosenMonth)
+        ? moneyInstance.getRepresentation(chosenYear, chosenMonth)
+        : null;
+      console.log('MONEY REPRESENTATION', representation)
+
+      this.setState({ representation })
+    })
+  }
+
+  getItems = representation => {
+    const { filter } = this.props
 
     const representationByFilter = filter === 'CATEGORY'
       ? representation.byCategory : representation.byEntryType
@@ -55,10 +84,35 @@ class MoneyList extends Component {
   }
 
   render() {
-    const { representation } = this.state
+    const { chosenYear, chosenMonth, representation } = this.state
 
     return (
       <div className="MoneyList">
+        <Row>
+          <Col>
+            <Input
+              type="select"
+              name="year"
+              id="yearSelect"
+              value={chosenYear}
+              onChange={this.selectDate}
+            >
+              <option value="">Pick the year...</option>
+              {Object.keys(yearsWithMonths).reverse().map(year => <option key={year} value={year}>{year}</option>)}
+            </Input>
+            <Input
+              disabled={!chosenYear}
+              type="select"
+              name="month"
+              id="monthSelect"
+              value={chosenMonth}
+              onChange={this.selectDate}
+            >
+              <option value="">Pick the month...</option>
+              {(yearsWithMonths[chosenYear] || []).map(month => <option key={month} value={month}>{month}</option>)}
+            </Input>
+          </Col>
+        </Row>
         <Row>
           <Col>
             <NewEntry
@@ -69,13 +123,13 @@ class MoneyList extends Component {
         <Row>
           <Col className="text-muted">November</Col>
         </Row>
-        <Row>
+        { representation && <Row>
           <Col>Revenue: {representation.revenue}</Col>
           <Col>Expenses: {representation.expenses}</Col>
           <Col>Savings: {representation.savings}</Col>
           <hr />
-        </Row>
-        { this.getItems() }
+        </Row>}
+        { representation && this.getItems(representation) }
       </div>
     );
   }

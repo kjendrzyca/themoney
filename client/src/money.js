@@ -1,3 +1,5 @@
+const generateId = () => Date.now()
+
 function moneyFactory (initialState = {}, entryTypes) {
   // example state
   // const state = {
@@ -44,6 +46,13 @@ function moneyFactory (initialState = {}, entryTypes) {
 
       previousState.groupsState = newGroupsState
     },
+    remove: (entryName, id, date, category) => {
+      state[date].groupsState[category][entryName] = {
+        ...state[date]
+          .groupsState[category][entryName]
+          .filter(element => element.id !== id),
+      }
+    },
     getAll: (year, month) => state[`${year}-${month}`].groupsState,
     getRepresentation: (year, month) => {
       if (!state[`${year}-${month}`]) {
@@ -70,7 +79,11 @@ function mergeCategory (categoryState = {}, entry) {
 function mergeEntry (entryState = [], entry) {
   return [
     ...entryState,
-    {payment: entry.price, type: entry.type},
+    {
+      payment: entry.price,
+      type: entry.type,
+      id: entry.id !== undefined ? entry.id : generateId(),
+    },
   ]
 }
 
