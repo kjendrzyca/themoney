@@ -4,7 +4,7 @@ import {
 } from 'reactstrap'
 
 import NewEntry from './NewEntry'
-import moneyInstance, { entry as entryFactory, YEAR, MONTH } from './moneySetup.js'
+import moneyInstance, { entry as entryFactory } from './moneySetup.js'
 
 const yearsWithMonths = { // get from money
   2017: [11, 12],
@@ -20,10 +20,10 @@ class MoneyList extends Component {
 
   addEntry = entry => {
     console.log('entry', entry)
-    const { category, name, price, type } = entry
-    moneyInstance.add(entryFactory(category, name, price, type))
+    const { year, month, category, name, price, type } = entry
+    moneyInstance.add(entryFactory(year, month, category, name, price, type))
     this.setState({
-      representation: moneyInstance.getRepresentation(YEAR, MONTH)
+      representation: moneyInstance.getRepresentation(year, month)
     })
   }
 
@@ -90,6 +90,13 @@ class MoneyList extends Component {
       <div className="MoneyList">
         <Row>
           <Col>
+            <NewEntry
+              addEntry={this.addEntry}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
             <Input
               type="select"
               name="year"
@@ -98,7 +105,11 @@ class MoneyList extends Component {
               onChange={this.selectDate}
             >
               <option value="">Pick the year...</option>
-              {Object.keys(yearsWithMonths).reverse().map(year => <option key={year} value={year}>{year}</option>)}
+              {
+                Object.keys(yearsWithMonths)
+                  .reverse()
+                  .map(year => <option key={year} value={year}>{year}</option>)
+              }
             </Input>
             <Input
               disabled={!chosenYear}
@@ -109,19 +120,16 @@ class MoneyList extends Component {
               onChange={this.selectDate}
             >
               <option value="">Pick the month...</option>
-              {(yearsWithMonths[chosenYear] || []).map(month => <option key={month} value={month}>{month}</option>)}
+              {
+                (yearsWithMonths[chosenYear]|| [])
+                  .reverse()
+                  .map(month => <option key={month} value={month}>{month}</option>)
+              }
             </Input>
           </Col>
         </Row>
         <Row>
-          <Col>
-            <NewEntry
-              addEntry={this.addEntry}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col className="text-muted">November</Col>
+          {chosenMonth && <Col className="text-muted">{chosenYear}-{chosenMonth}</Col>}
         </Row>
         { representation && <Row>
           <Col>Revenue: {representation.revenue}</Col>

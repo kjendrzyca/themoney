@@ -14,3 +14,4 @@ Opinionated money mangement.
 1. ~~parse price to number always or throw error~~
 1. updating entry
 1. deleting entry
+1. locking a month
