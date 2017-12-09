@@ -6,16 +6,12 @@ import {
 import NewEntry from './NewEntry'
 import moneyInstance, { entry as entryFactory } from './moneySetup.js'
 
-const yearsWithMonths = { // get from money
-  2017: [11, 12],
-  2016: [9, 10],
-}
-
 class MoneyList extends Component {
   state = {
     representation: null,
     chosenYear: '',
     chosenMonth: '',
+    yearsWithMonths: moneyInstance.getYearsWithMonths() || {},
   }
 
   addEntry = entry => {
@@ -23,7 +19,8 @@ class MoneyList extends Component {
     const { year, month, category, name, price, type } = entry
     moneyInstance.add(entryFactory(year, month, category, name, price, type))
     this.setState({
-      representation: moneyInstance.getRepresentation(year, month)
+      representation: moneyInstance.getRepresentation(year, month),
+      yearsWithMonths: moneyInstance.getYearsWithMonths(),
     })
   }
 
@@ -84,7 +81,7 @@ class MoneyList extends Component {
   }
 
   render() {
-    const { chosenYear, chosenMonth, representation } = this.state
+    const { chosenYear, chosenMonth, representation, yearsWithMonths } = this.state
 
     return (
       <div className="MoneyList">

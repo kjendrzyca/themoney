@@ -21,10 +21,10 @@ const Categories = {
   STUFF: 'STUFF',
 }
 
-theMoney.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
-theMoney.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
-theMoney.add(entry(Categories.GROCERY, 'kiwi', 512, EntryTypes.ONE_TIME))
-theMoney.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
-theMoney.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
+theMoney.add(entry(YEAR, MONTH, Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
+theMoney.add(entry(YEAR, MONTH, Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
+theMoney.add(entry(YEAR, MONTH, Categories.GROCERY, 'kiwi', 512, EntryTypes.ONE_TIME))
+theMoney.add(entry(YEAR, MONTH, Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
+theMoney.add(entry(YEAR, MONTH, Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
 
 export default theMoney;

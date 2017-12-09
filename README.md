@@ -15,3 +15,4 @@ Opinionated money mangement.
 1. updating entry
 1. deleting entry
 1. locking a month
+1. figure out how to add revenue per month
