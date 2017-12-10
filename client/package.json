@@ -1,5 +1,6 @@
 {
   "name": "themoney",
+  "description": "Instant visualization of your spending habits",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -14,5 +15,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-prettier": "^2.2.0",
+    "prettier": "^1.6.1"
   }
 }
