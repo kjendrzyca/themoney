@@ -1,6 +1,6 @@
 const generateId = () => Date.now()
 
-function moneyFactory (initialState = {}, entryTypes) {
+function moneyFactory(initialState = {}, entryTypes) {
   // example state
   // const state = {
   //   '2017-11': {
@@ -41,16 +41,19 @@ function moneyFactory (initialState = {}, entryTypes) {
 
       const newGroupsState = {
         ...previousState.groupsState,
-        [parsedEntry.category]: mergeCategory(previousState.groupsState[parsedEntry.category], parsedEntry),
+        [parsedEntry.category]: mergeCategory(
+          previousState.groupsState[parsedEntry.category],
+          parsedEntry,
+        ),
       }
 
       previousState.groupsState = newGroupsState
     },
     remove: (entryName, id, date, category) => {
       state[date].groupsState[category][entryName] = {
-        ...state[date]
-          .groupsState[category][entryName]
-          .filter(element => element.id !== id),
+        ...state[date].groupsState[category][entryName].filter(
+          element => element.id !== id,
+        ),
       }
     },
     getAll: (year, month) => state[`${year}-${month}`].groupsState,
@@ -66,30 +69,28 @@ function moneyFactory (initialState = {}, entryTypes) {
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
     },
-    getYearsWithMonths: () => Object.keys(state).reduce((prev, current) => {
-      const [year, month] = current.split('-')
+    getYearsWithMonths: () =>
+      Object.keys(state).reduce((prev, current) => {
+        const [year, month] = current.split('-')
 
-      const nextValue = {
-        ...prev,
-        [year]: [
-          ...(prev[year] || []),
-          month,
-        ],
-      }
+        const nextValue = {
+          ...prev,
+          [year]: [...(prev[year] || []), month],
+        }
 
-      return nextValue
-    }, {}),
+        return nextValue
+      }, {}),
   }
 }
 
-function mergeCategory (categoryState = {}, entry) {
+function mergeCategory(categoryState = {}, entry) {
   return {
     ...categoryState,
     [entry.name]: mergeEntry(categoryState[entry.name], entry),
   }
 }
 
-function mergeEntry (entryState = [], entry) {
+function mergeEntry(entryState = [], entry) {
   return [
     ...entryState,
     {
@@ -100,68 +101,87 @@ function mergeEntry (entryState = [], entry) {
   ]
 }
 
-function getRepresentation ({groupsState = {}, revenue = 0}) {
-  const byCategory = Object.keys(groupsState).map(categoryKey => {
-    const entries = Object.keys(groupsState[categoryKey]).map(entryKey => {
-      const total = groupsState[categoryKey][entryKey].reduce((sum, val) => sum + val.payment, 0)
-      return {[entryKey]: total}
-    }).reduce((acc, entry) => {
+function getRepresentation({groupsState = {}, revenue = 0}) {
+  const byCategory = Object.keys(groupsState)
+    .map(categoryKey => {
+      const entries = Object.keys(groupsState[categoryKey])
+        .map(entryKey => {
+          const total = groupsState[categoryKey][entryKey].reduce(
+            (sum, val) => sum + val.payment,
+            0,
+          )
+          return {[entryKey]: total}
+        })
+        .reduce(
+          (acc, entry) => ({
+            ...acc,
+            ...entry,
+          }),
+          {},
+        )
+
       return {
+        [categoryKey]: entries,
+      }
+    })
+    .reduce(
+      (acc, entry) => ({
         ...acc,
         ...entry,
-      }
-    }, {})
-
-    return {
-      [categoryKey]: entries,
-    }
-  }).reduce((acc, entry) => {
-    return {
-      ...acc,
-      ...entry,
-    }
-  }, {})
+      }),
+      {},
+    )
 
   const flattenedWithoutCategory = Object.keys(groupsState)
     .map(categoryKey => groupsState[categoryKey])
-    .reduce((acc, entry) => {
-      return {
+    .reduce(
+      (acc, entry) => ({
         ...acc,
         ...entry,
+      }),
+      {},
+    )
+
+  const byEntryType = Object.keys(flattenedWithoutCategory).reduce(
+    (acc, entryKey) => {
+      const flattened = flattenedWithoutCategory[entryKey].map(
+        entryPayment => ({entryKey, ...entryPayment}),
+      )
+
+      flattened.forEach(flattenedEntry => {
+        if (!acc[flattenedEntry.type]) {
+          acc[flattenedEntry.type] = {}
+        }
+
+        acc[flattenedEntry.type][flattenedEntry.entryKey] =
+          (acc[flattenedEntry.type][flattenedEntry.entryKey] || 0) +
+          flattenedEntry.payment
+      })
+
+      return acc
+    },
+    {},
+  )
+
+  const calculateTotal = groupedState =>
+    Object.keys(groupedState).reduce((acc, type) => {
+      const groupForType = groupedState[type]
+      const calculated = Object.keys(groupForType)
+        .map(objectKey => groupForType[objectKey])
+        .reduce((sum, val) => sum + val, 0)
+
+      return {
+        ...acc,
+        [type]: calculated,
       }
     }, {})
 
-  const byEntryType = Object.keys(flattenedWithoutCategory).reduce((acc, entryKey) => {
-    const flattened = flattenedWithoutCategory[entryKey].map(entryPayment => ({entryKey, ...entryPayment}))
-
-    flattened.forEach(flattenedEntry => {
-      if (!acc[flattenedEntry.type]) {
-        acc[flattenedEntry.type] = {}
-      }
-
-      acc[flattenedEntry.type][flattenedEntry.entryKey] =
-        (acc[flattenedEntry.type][flattenedEntry.entryKey] || 0) + flattenedEntry.payment
-    })
-
-    return acc
-  }, {})
-
-  const calculateTotal = groupedState => Object.keys(groupedState).reduce((acc, type) => {
-    const groupForType = groupedState[type]
-    const calculated = Object.keys(groupForType)
-      .map(objectKey => groupForType[objectKey])
-      .reduce((sum, val) => sum + val, 0)
-
-    return {
-      ...acc,
-      [type]: calculated,
-    }
-  }, {})
-
   const byEntryTypeTotal = calculateTotal(byEntryType)
   const byCategoryTotal = calculateTotal(byCategory)
-  const expenses = (Number(byEntryTypeTotal.FIXED) || 0) + (Number(byEntryTypeTotal.ONE_TIME) || 0)
-  const savings = (revenue - expenses) || 0
+  const expenses =
+    (Number(byEntryTypeTotal.FIXED) || 0) +
+    (Number(byEntryTypeTotal.ONE_TIME) || 0)
+  const savings = revenue - expenses || 0
 
   return {
     byCategory,

@@ -1,8 +1,21 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { Input, Button } from 'reactstrap'
+import {Input, Button} from 'reactstrap'
 
-const Months = [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12' ]
+const Months = [
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+]
 
 const EntryTypes = {
   ONE_TIME: 'ONE_TIME',
@@ -15,12 +28,12 @@ const Params = {
   CATEGORY: 'category',
   NAME: 'name',
   PRICE: 'price',
-  TYPE: 'type'
+  TYPE: 'type',
 }
 
 const initialState = {
-  [Params.YEAR]: (new Date()).getFullYear().toString(),
-  [Params.MONTH]: ((new Date()).getMonth() + 1).toString(),
+  [Params.YEAR]: new Date().getFullYear().toString(),
+  [Params.MONTH]: (new Date().getMonth() + 1).toString(),
   [Params.CATEGORY]: '',
   [Params.NAME]: '',
   [Params.PRICE]: 0,
@@ -37,7 +50,7 @@ class NewEntry extends Component {
   changeProperty = event => {
     console.log('event', event.target.name)
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     })
   }
 
@@ -47,7 +60,7 @@ class NewEntry extends Component {
   }
 
   render() {
-    const { year, month, category, name, price, type } = this.state
+    const {year, month, category, name, price, type} = this.state
 
     const isFormValid = category && name && price && type
 
@@ -70,7 +83,11 @@ class NewEntry extends Component {
           onChange={this.changeProperty}
         >
           <option value="">Pick month...</option>
-          {Months.map(monthName => <option key={monthName} value={monthName}>{monthName}</option>)}
+          {Months.map(monthName => (
+            <option key={monthName} value={monthName}>
+              {monthName}
+            </option>
+          ))}
         </Input>
 
         <Input
@@ -111,14 +128,11 @@ class NewEntry extends Component {
           onChange={this.changeProperty}
         >
           <option value="">Pick category...</option>
-          <option value={'GROCERY'}>Groceries</option>
-          <option value={'STUFF'}>Stuff</option>
+          <option value="GROCERY">Groceries</option>
+          <option value="STUFF">Stuff</option>
         </Input>
 
-        <Button
-          disabled={!isFormValid}
-          onClick={this.addEntry}
-        >
+        <Button disabled={!isFormValid} onClick={this.addEntry}>
           Add
         </Button>
       </div>

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'assert'
 import moneyFactory from './money'
 
 const DEFAULT_YEAR = '2017'
@@ -50,7 +50,6 @@ describe('money', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should add two single entries to the same category', () => {
@@ -65,7 +64,6 @@ describe('money', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should make array of two entries with the same name', () => {
@@ -82,7 +80,6 @@ describe('money', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should parse price that is a string', () => {
@@ -97,7 +94,6 @@ describe('money', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should remove entry', () => {
@@ -113,7 +109,6 @@ describe('money', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 })
 
@@ -124,7 +119,8 @@ describe('money representation', () => {
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED))
 
-    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['byCategory']
+    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+      .byCategory
     const expected = {
       [Categories.GROCERY]: {
         kiwi: 17,
@@ -133,7 +129,6 @@ describe('money representation', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should calculate total per group by category', () => {
@@ -144,14 +139,14 @@ describe('money representation', () => {
     money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
     money.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
 
-    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['byCategoryTotal']
+    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+      .byCategoryTotal
     const expected = {
       [Categories.GROCERY]: 5 + 12 + 512,
       [Categories.STUFF]: 400 + 1100,
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should group by entry type with calculated total payment', () => {
@@ -162,7 +157,8 @@ describe('money representation', () => {
     money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
     money.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
 
-    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['byEntryType']
+    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+      .byEntryType
     const expected = {
       [EntryTypes.FIXED]: {
         kiwi: 17,
@@ -175,7 +171,6 @@ describe('money representation', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should calculate total per group by entry', () => {
@@ -186,14 +181,14 @@ describe('money representation', () => {
     money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
     money.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
 
-    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['byEntryTypeTotal']
+    const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+      .byEntryTypeTotal
     const expected = {
       [EntryTypes.FIXED]: 5 + 12,
       [EntryTypes.ONE_TIME]: 512 + 400 + 1100,
     }
 
     assert.deepEqual(actual, expected)
-
   })
 
   test('should return empty data when nothing is added', () => {
@@ -205,7 +200,6 @@ describe('money representation', () => {
     assert.deepEqual(actual.byCategoryTotal, {})
     assert.deepEqual(actual.byEntryType, {})
     assert.deepEqual(actual.byEntryTypeTotal, {})
-
   })
 
   test('should return empty data when only revenue is added', () => {
@@ -221,7 +215,6 @@ describe('money representation', () => {
     assert.deepEqual(actual.byCategoryTotal, {})
     assert.deepEqual(actual.byEntryType, {})
     assert.deepEqual(actual.byEntryTypeTotal, {})
-
   })
 
   test('should made correct calculations when only groupState is added', () => {
@@ -229,7 +222,7 @@ describe('money representation', () => {
       '2017-11': {
         groupsState: {
           GROCERY: {
-            kiwi: [{'payment': 5, 'type': 'FIXED'}],
+            kiwi: [{payment: 5, type: 'FIXED'}],
           },
         },
       },
@@ -243,7 +236,6 @@ describe('money representation', () => {
     assert.deepEqual(actual.byEntryTypeTotal, {
       FIXED: 5,
     })
-
   })
 
   test('should save revenue', () => {
@@ -253,8 +245,10 @@ describe('money representation', () => {
       },
     })
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
-    assert.equal(money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH).revenue, 5000)
-
+    assert.equal(
+      money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH).revenue,
+      5000,
+    )
   })
 
   test('should calculate savings and expenses', () => {
@@ -269,14 +263,15 @@ describe('money representation', () => {
     money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
     money.add(entry(Categories.STUFF, 'tv', 1100, EntryTypes.ONE_TIME))
 
-    const actualExpenses = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['expenses']
+    const actualExpenses = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+      .expenses
     const expectedExpenses = 5 + 12 + 512 + 400 + 1100
-    const actualSavings = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)['savings']
+    const actualSavings = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
+      .savings
     const expectedSavings = 5000 - expectedExpenses
 
     assert.equal(actualExpenses, expectedExpenses)
     assert.equal(actualSavings, expectedSavings)
-
   })
 
   test('should provide standard entry types', () => {
@@ -285,26 +280,33 @@ describe('money representation', () => {
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
     })
-
   })
 
   test('should add custom entry types', () => {
-    const money = moneyFactory({}, {
-      RARE: 'RARE',
-    })
+    const money = moneyFactory(
+      {},
+      {
+        RARE: 'RARE',
+      },
+    )
     assert.deepEqual(money.entryTypes, {
       RARE: 'RARE',
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
     })
-
   })
 
   test('should return list of months grouped by year', () => {
     const money = moneyFactory()
-    money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED, 1, '01', '2017'))
-    money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED, 2, '02', '2017'))
-    money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED, 3, '12', '2016'))
+    money.add(
+      entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED, 1, '01', '2017'),
+    )
+    money.add(
+      entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED, 2, '02', '2017'),
+    )
+    money.add(
+      entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED, 3, '12', '2016'),
+    )
 
     const actual = money.getYearsWithMonths()
     const expected = {
@@ -313,6 +315,5 @@ describe('money representation', () => {
     }
 
     assert.deepEqual(actual, expected)
-
   })
 })
