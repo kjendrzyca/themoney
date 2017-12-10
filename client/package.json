@@ -1,9 +1,11 @@
 {
   "name": "themoney",
+  "description": "Instant visualization of your spending habits",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "bootstrap": "4.0.0-beta.2",
+    "prop-types": "^15.6.0",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-scripts": "1.0.17",
@@ -12,7 +14,14 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "lint": "eslint .",
+    "test": "CI=1 react-scripts test --env=jsdom --verbose",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.3.1",
+    "prettier": "^1.9.1"
   }
 }

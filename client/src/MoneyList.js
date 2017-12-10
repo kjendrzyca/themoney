@@ -1,83 +1,165 @@
-import React, { Component } from 'react'
-import {
-  Row, Col,
-} from 'reactstrap'
-
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
+import {Row, Col, Input} from 'reactstrap'
 import NewEntry from './NewEntry'
-import moneyInstance, { entry as entryFactory, YEAR, MONTH } from './moneySetup.js'
-
-const moneyRepresentation = moneyInstance.getRepresentation(YEAR, MONTH)
-console.log('MONEY REPRESENTATION', moneyRepresentation)
+import moneyInstance, {entry as entryFactory} from './moneySetup'
 
 class MoneyList extends Component {
+  static propTypes = {
+    filter: PropTypes.string.isRequired,
+  }
+
   state = {
-    representation: moneyRepresentation
+    chosenYear: '',
+    chosenMonth: '',
+    representation: null,
+    yearsWithMonths: moneyInstance.getYearsWithMonths() || {},
+  }
+
+  getItems = representation => {
+    const {filter} = this.props
+
+    const representationByFilter =
+      filter === 'CATEGORY'
+        ? representation.byCategory
+        : representation.byEntryType
+
+    const totalByFilter =
+      filter === 'CATEGORY'
+        ? representation.byCategoryTotal
+        : representation.byEntryTypeTotal
+
+    return Object.keys(representationByFilter).map(entry => (
+      <Row key={entry}>
+        <Col className="bold text-right" xs={6}>
+          {entry}
+        </Col>
+        <Col className="bold text-left" xs={6}>
+          {totalByFilter[entry]} (total)
+        </Col>
+        <hr />
+        <Col xs={12}>
+          {Object.entries(representationByFilter[entry]).map(singleEntry => (
+            <Row key={singleEntry}>
+              <Col className="text-right">{singleEntry[0]}:</Col>
+              <Col className="text-left">{singleEntry[1]}</Col>
+            </Row>
+          ))}
+        </Col>
+        <hr />
+      </Row>
+    ))
   }
 
   addEntry = entry => {
     console.log('entry', entry)
-    const { category, name, price, type } = entry
-    moneyInstance.add(entryFactory(category, name, price, type))
+    const {year, month, category, name, price, type} = entry
+    moneyInstance.add(entryFactory(year, month, category, name, price, type))
     this.setState({
-      representation: moneyInstance.getRepresentation(YEAR, MONTH)
+      representation: moneyInstance.getRepresentation(year, month),
+      yearsWithMonths: moneyInstance.getYearsWithMonths(),
     })
   }
 
-  getItems = () => {
-    const { filter } = this.props
-    const { representation } = this.state
+  selectDate = event => {
+    const propertyName = event.target.name
+    const propertyValue = event.target.value
 
+    if (propertyName === 'year') {
+      this.setState({
+        chosenYear: propertyValue,
+        chosenMonth: '',
+      })
 
-    const representationByFilter = filter === 'CATEGORY'
-      ? representation.byCategory : representation.byEntryType
+      return
+    }
 
-    const totalByFilter = filter === 'CATEGORY'
-      ? representation.byCategoryTotal : representation.byEntryTypeTotal
+    this.setState(
+      {
+        chosenMonth: propertyValue,
+      },
+      () => {
+        const {chosenYear, chosenMonth} = this.state
 
-    return Object.keys(representationByFilter).map(entry => {
-      return (
-        <Row key={entry}>
-          <Col className="bold text-right" xs={6}>{entry}</Col>
-          <Col className="bold text-left" xs={6}>{totalByFilter[entry]} (total)</Col>
-          <hr />
-          <Col xs={12}>
-            {Object.entries(representationByFilter[entry]).map(entry => {
-              return <Row key={entry}>
-                <Col className="text-right">{entry[0]}:</Col>
-                <Col className="text-left">{entry[1]}</Col>
-              </Row>
-            })}
-          </Col>
-          <hr />
-        </Row>
-      )
-    })
+        const representation =
+          chosenYear && chosenMonth
+            ? moneyInstance.getRepresentation(chosenYear, chosenMonth)
+            : null
+        console.log('MONEY REPRESENTATION', representation)
+
+        this.setState({representation})
+      },
+    )
   }
 
   render() {
-    const { representation } = this.state
+    const {
+      chosenYear,
+      chosenMonth,
+      representation,
+      yearsWithMonths,
+    } = this.state
 
     return (
       <div className="MoneyList">
         <Row>
           <Col>
-            <NewEntry
-              addEntry={this.addEntry}
-            />
+            <NewEntry addEntry={this.addEntry} />
           </Col>
         </Row>
         <Row>
-          <Col className="text-muted">November</Col>
+          <Col>
+            <Input
+              type="select"
+              name="year"
+              id="yearSelect"
+              value={chosenYear}
+              onChange={this.selectDate}
+            >
+              <option value="">Pick the year...</option>
+              {Object.keys(yearsWithMonths)
+                .reverse()
+                .map(year => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+            </Input>
+            <Input
+              disabled={!chosenYear}
+              type="select"
+              name="month"
+              id="monthSelect"
+              value={chosenMonth}
+              onChange={this.selectDate}
+            >
+              <option value="">Pick the month...</option>
+              {(yearsWithMonths[chosenYear] || []).reverse().map(month => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </Input>
+          </Col>
         </Row>
         <Row>
-          <Col>Revenue: {representation.revenue}</Col>
-          <Col>Expenses: {representation.expenses}</Col>
-          <Col>Savings: {representation.savings}</Col>
-          <hr />
+          {chosenMonth && (
+            <Col className="text-muted">
+              {chosenYear}-{chosenMonth}
+            </Col>
+          )}
         </Row>
-        { this.getItems() }
+        {representation && (
+          <Row>
+            <Col>Revenue: {representation.revenue}</Col>
+            <Col>Expenses: {representation.expenses}</Col>
+            <Col>Savings: {representation.savings}</Col>
+            <hr />
+          </Row>
+        )}
+        {representation && this.getItems(representation)}
       </div>
-    );
+    )
   }
 }
 
