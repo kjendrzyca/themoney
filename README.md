@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/kjendrzyca/themoney/tree/master.svg?style=svg)](https://circleci.com/gh/kjendrzyca/themoney/tree/master)
 
-Opinionated money mangement.
+Instant visualization of your spending habits.
 
 # TODO
 
@@ -14,3 +14,4 @@ Opinionated money mangement.
 1. ~~parse price to number always or throw error~~
 1. updating entry
 1. deleting entry
+1. year/half-year/on-demand summary
