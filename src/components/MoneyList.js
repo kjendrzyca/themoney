@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Row, Col, Input} from 'reactstrap'
 import NewEntry from './NewEntry'
-import moneyInstance, {entry as entryFactory} from './moneySetup'
+import moneyInstance, {entry as entryFactory} from '../moneySetup'
 
 class MoneyList extends Component {
   static propTypes = {

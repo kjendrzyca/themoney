@@ -34,7 +34,7 @@ const Categories = {
 }
 
 describe('money', () => {
-  test('should add single entry to the category', () => {
+  it('should add single entry to the category', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.FIXED))
     money.add(entry(Categories.STUFF, 'ps4pro', 400, EntryTypes.ONE_TIME))
@@ -52,7 +52,7 @@ describe('money', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should add two single entries to the same category', () => {
+  it('should add two single entries to the same category', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', 5, EntryTypes.ONE_TIME))
     money.add(entry(Categories.GROCERY, 'potato', 10, EntryTypes.ONE_TIME))
@@ -66,7 +66,7 @@ describe('money', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should make array of two entries with the same name', () => {
+  it('should make array of two entries with the same name', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.ONE_TIME))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.ONE_TIME))
@@ -82,7 +82,7 @@ describe('money', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should parse price that is a string', () => {
+  it('should parse price that is a string', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', '5', EntryTypes.FIXED))
 
@@ -96,7 +96,7 @@ describe('money', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should remove entry', () => {
+  it('should remove entry', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'tomato', '5', EntryTypes.FIXED, 1))
     money.add(entry(Categories.GROCERY, 'tomato', '8', EntryTypes.FIXED, 2))
@@ -113,7 +113,7 @@ describe('money', () => {
 })
 
 describe('money representation', () => {
-  test('should group by category with calculated total payment', () => {
+  it('should group by category with calculated total payment', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -121,6 +121,7 @@ describe('money representation', () => {
 
     const actual = money.getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
       .byCategory
+
     const expected = {
       [Categories.GROCERY]: {
         kiwi: 17,
@@ -131,7 +132,7 @@ describe('money representation', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should calculate total per group by category', () => {
+  it('should calculate total per group by category', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -149,7 +150,7 @@ describe('money representation', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should group by entry type with calculated total payment', () => {
+  it('should group by entry type with calculated total payment', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -173,7 +174,7 @@ describe('money representation', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should calculate total per group by entry', () => {
+  it('should calculate total per group by entry', () => {
     const money = moneyFactory()
     money.add(entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED))
     money.add(entry(Categories.GROCERY, 'kiwi', 12, EntryTypes.FIXED))
@@ -191,7 +192,7 @@ describe('money representation', () => {
     assert.deepEqual(actual, expected)
   })
 
-  test('should return empty data when nothing is added', () => {
+  it('should return empty data when nothing is added', () => {
     const actual = moneyFactory().getRepresentation(DEFAULT_YEAR, DEFAULT_MONTH)
     assert.equal(actual.revenue, 0)
     assert.equal(actual.savings, 0)
@@ -202,7 +203,7 @@ describe('money representation', () => {
     assert.deepEqual(actual.byEntryTypeTotal, {})
   })
 
-  test('should return empty data when only revenue is added', () => {
+  it('should return empty data when only revenue is added', () => {
     const actual = moneyFactory({
       '2017-11': {
         revenue: 5000,
@@ -217,7 +218,7 @@ describe('money representation', () => {
     assert.deepEqual(actual.byEntryTypeTotal, {})
   })
 
-  test('should made correct calculations when only groupState is added', () => {
+  it('should made correct calculations when only groupState is added', () => {
     const actual = moneyFactory({
       '2017-11': {
         groupsState: {
@@ -238,7 +239,7 @@ describe('money representation', () => {
     })
   })
 
-  test('should save revenue', () => {
+  it('should save revenue', () => {
     const money = moneyFactory({
       [DEFAULT_DATE]: {
         revenue: 5000,
@@ -251,7 +252,7 @@ describe('money representation', () => {
     )
   })
 
-  test('should calculate savings and expenses', () => {
+  it('should calculate savings and expenses', () => {
     const money = moneyFactory({
       [DEFAULT_DATE]: {
         revenue: 5000,
@@ -274,7 +275,7 @@ describe('money representation', () => {
     assert.equal(actualSavings, expectedSavings)
   })
 
-  test('should provide standard entry types', () => {
+  it('should provide standard entry types', () => {
     const money = moneyFactory()
     assert.deepEqual(money.entryTypes, {
       FIXED: 'FIXED',
@@ -282,7 +283,7 @@ describe('money representation', () => {
     })
   })
 
-  test('should add custom entry types', () => {
+  it('should add custom entry types', () => {
     const money = moneyFactory(
       {},
       {
@@ -296,7 +297,7 @@ describe('money representation', () => {
     })
   })
 
-  test('should return list of months grouped by year', () => {
+  it('should return list of months grouped by year', () => {
     const money = moneyFactory()
     money.add(
       entry(Categories.GROCERY, 'kiwi', 5, EntryTypes.FIXED, 1, '01', '2017'),
