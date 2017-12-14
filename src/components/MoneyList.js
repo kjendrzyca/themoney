@@ -42,7 +42,7 @@ class MoneyList extends Component {
           {Object.entries(representationByFilter[entry]).map(singleEntry => (
             <Row key={singleEntry}>
               <Col className="text-right">{singleEntry[0]}:</Col>
-              <Col className="text-left">{singleEntry[1]}</Col>
+              <Col className="text-left">{singleEntry[1].total}</Col>
             </Row>
           ))}
         </Col>

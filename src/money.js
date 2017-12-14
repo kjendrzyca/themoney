@@ -110,7 +110,12 @@ function getRepresentation({groupsState = {}, revenue = 0}) {
             (sum, val) => sum + val.payment,
             0,
           )
-          return {[entryKey]: total}
+
+          return {
+            [entryKey]: {
+              total,
+            },
+          }
         })
         .reduce(
           (acc, entry) => ({
@@ -153,8 +158,12 @@ function getRepresentation({groupsState = {}, revenue = 0}) {
           acc[flattenedEntry.type] = {}
         }
 
-        acc[flattenedEntry.type][flattenedEntry.entryKey] =
-          (acc[flattenedEntry.type][flattenedEntry.entryKey] || 0) +
+        if (!acc[flattenedEntry.type][flattenedEntry.entryKey]) {
+          acc[flattenedEntry.type][flattenedEntry.entryKey] = {}
+        }
+
+        acc[flattenedEntry.type][flattenedEntry.entryKey].total =
+          (acc[flattenedEntry.type][flattenedEntry.entryKey].total || 0) +
           flattenedEntry.payment
       })
 
@@ -167,7 +176,7 @@ function getRepresentation({groupsState = {}, revenue = 0}) {
     Object.keys(groupedState).reduce((acc, type) => {
       const groupForType = groupedState[type]
       const calculated = Object.keys(groupForType)
-        .map(objectKey => groupForType[objectKey])
+        .map(objectKey => groupForType[objectKey].total)
         .reduce((sum, val) => sum + val, 0)
 
       return {

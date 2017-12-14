@@ -16,6 +16,7 @@
     "build": "react-scripts build",
     "lint": "eslint .",
     "test": "CI=1 react-scripts test --env=jsdom --verbose",
+    "test:watch": "react-scripts test --env=jsdom --verbose",
     "eject": "react-scripts eject"
   },
   "devDependencies": {

@@ -124,8 +124,8 @@ describe('money representation', () => {
 
     const expected = {
       [Categories.GROCERY]: {
-        kiwi: 17,
-        tomato: 5,
+        kiwi: {total: 17},
+        tomato: {total: 5},
       },
     }
 
@@ -162,12 +162,12 @@ describe('money representation', () => {
       .byEntryType
     const expected = {
       [EntryTypes.FIXED]: {
-        kiwi: 17,
+        kiwi: {total: 17},
       },
       [EntryTypes.ONE_TIME]: {
-        ps4pro: 400,
-        tv: 1100,
-        kiwi: 512,
+        ps4pro: {total: 400},
+        tv: {total: 1100},
+        kiwi: {total: 512},
       },
     }
 
