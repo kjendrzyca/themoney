@@ -40,14 +40,36 @@ Instant visualization of your spending habits.
 {
   "byCategory": {
     "GROCERY": {
-      "kiwi": 17,
-      "tomato": 5
+      "kiwi": {
+        total: 17,
+        entries: [
+          {payment: 5, type: EntryTypes.FIXED, id: 0},
+          {payment: 12, type: EntryTypes.FIXED, id: 0},
+        ]
+      },
+      "tomato": {
+        total: 5,
+        entries: [
+          {payment: 5, type: EntryTypes.FIXED, id: 0}
+        ]
+      }
     }
   },
   "byEntryType": {
     "FIXED": {
-      "kiwi": 17,
-      "tomato": 5
+      "kiwi": {
+        total: 17,
+        entries: [
+          {entryKey: 'kiwi', payment: 5, type: EntryTypes.FIXED, id: 0},
+          {entryKey: 'kiwi', payment: 12, type: EntryTypes.FIXED, id: 0},
+        ],
+      },
+      "tomato": {
+        total: 5,
+        entries: [
+          {entryKey: 'tomato', payment: 5, type: EntryTypes.FIXED, id: 0},
+        ],
+      }
     }
   },
   "byEntryTypeTotal": {

@@ -124,8 +124,17 @@ describe('money representation', () => {
 
     const expected = {
       [Categories.GROCERY]: {
-        kiwi: {total: 17},
-        tomato: {total: 5},
+        kiwi: {
+          total: 17,
+          entries: [
+            {payment: 5, type: EntryTypes.FIXED, id: 0},
+            {payment: 12, type: EntryTypes.FIXED, id: 0},
+          ],
+        },
+        tomato: {
+          total: 5,
+          entries: [{payment: 5, type: EntryTypes.FIXED, id: 0}],
+        },
       },
     }
 
@@ -162,12 +171,38 @@ describe('money representation', () => {
       .byEntryType
     const expected = {
       [EntryTypes.FIXED]: {
-        kiwi: {total: 17},
+        kiwi: {
+          total: 17,
+          entries: [
+            {entryKey: 'kiwi', payment: 5, type: EntryTypes.FIXED, id: 0},
+            {entryKey: 'kiwi', payment: 12, type: EntryTypes.FIXED, id: 0},
+          ],
+        },
       },
       [EntryTypes.ONE_TIME]: {
-        ps4pro: {total: 400},
-        tv: {total: 1100},
-        kiwi: {total: 512},
+        ps4pro: {
+          total: 400,
+          entries: [
+            {
+              entryKey: 'ps4pro',
+              payment: 400,
+              type: EntryTypes.ONE_TIME,
+              id: 0,
+            },
+          ],
+        },
+        tv: {
+          total: 1100,
+          entries: [
+            {entryKey: 'tv', payment: 1100, type: EntryTypes.ONE_TIME, id: 0},
+          ],
+        },
+        kiwi: {
+          total: 512,
+          entries: [
+            {entryKey: 'kiwi', payment: 512, type: EntryTypes.ONE_TIME, id: 0},
+          ],
+        },
       },
     }
 

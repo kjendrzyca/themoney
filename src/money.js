@@ -104,7 +104,7 @@ function mergeEntry(entryState = [], entry) {
 function getRepresentation({groupsState = {}, revenue = 0}) {
   const byCategory = Object.keys(groupsState)
     .map(categoryKey => {
-      const entries = Object.keys(groupsState[categoryKey])
+      const entriesWithTotal = Object.keys(groupsState[categoryKey])
         .map(entryKey => {
           const total = groupsState[categoryKey][entryKey].reduce(
             (sum, val) => sum + val.payment,
@@ -114,6 +114,7 @@ function getRepresentation({groupsState = {}, revenue = 0}) {
           return {
             [entryKey]: {
               total,
+              entries: groupsState[categoryKey][entryKey],
             },
           }
         })
@@ -126,7 +127,7 @@ function getRepresentation({groupsState = {}, revenue = 0}) {
         )
 
       return {
-        [categoryKey]: entries,
+        [categoryKey]: entriesWithTotal,
       }
     })
     .reduce(
@@ -165,6 +166,11 @@ function getRepresentation({groupsState = {}, revenue = 0}) {
         acc[flattenedEntry.type][flattenedEntry.entryKey].total =
           (acc[flattenedEntry.type][flattenedEntry.entryKey].total || 0) +
           flattenedEntry.payment
+
+        acc[flattenedEntry.type][flattenedEntry.entryKey].entries = [
+          ...(acc[flattenedEntry.type][flattenedEntry.entryKey].entries || []),
+          flattenedEntry,
+        ]
       })
 
       return acc
