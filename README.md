@@ -78,5 +78,19 @@ Instant visualization of your spending habits.
 1. rename category or entry type (id instead of hardcoded value?)
 1. add list of single entries to each group in data representation (per entry type also?)
 
+# What "finished" means
+
+1. Level 1
+  - looking great (material ui), clever ui
+  - usable by one user
+  - no real database, as long as data can be easily backed up (local storage with a button to dump to file is enough)
+  - deployed
+1. Level 2
+  - still usable by one user
+  - real database
+1. Level 3
+  - my friends can use it
+  - authentication/authorization/security, all of the clever stuff (yes, I know, it should be there from the beginning)
+  
 # Credits
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
