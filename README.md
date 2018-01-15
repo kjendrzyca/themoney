@@ -80,17 +80,19 @@ Instant visualization of your spending habits.
 
 # What "finished" means
 
-1. Level 1
-  - looking great (material ui), clever ui
-  - usable by one user
-  - no real database, as long as data can be easily backed up (local storage with a button to dump to file is enough)
-  - deployed
-1. Level 2
-  - still usable by one user
-  - real database
-1. Level 3
-  - my friends can use it
-  - authentication/authorization/security, all of the clever stuff (yes, I know, it should be there from the beginning)
+Level 1
+1. looking great (material ui), clever ui
+1. only I can use it
+1. no real database, as long as data can be easily backed up (local storage with a button to dump to file is enough)
+1. deployed
+
+Level 2
+1. still only I can use it
+1. real database
+
+Level 3
+1. my friends can use it
+1. authentication/authorization/security, all of the clever stuff (yes, I know, it should be there from the beginning)
   
 # Credits
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
