@@ -1,4 +1,6 @@
-const generateId = () => Date.now()
+const cuid = require('cuid')
+
+const generateId = () => cuid()
 
 function moneyFactory(initialState = {}, entryTypes) {
   // example state
@@ -50,11 +52,11 @@ function moneyFactory(initialState = {}, entryTypes) {
       previousState.groupsState = newGroupsState
     },
     remove: (entryName, id, date, category) => {
-      state[date].groupsState[category][entryName] = {
+      state[date].groupsState[category][entryName] = [
         ...state[date].groupsState[category][entryName].filter(
           element => element.id !== id,
         ),
-      }
+      ]
     },
     getAll: (year, month) => state[`${year}-${month}`].groupsState,
     getRepresentation: (year, month) => {
