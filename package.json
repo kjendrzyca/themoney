@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "4.0.0-beta.2",
+    "cuid": "^2.0.2",
     "prop-types": "^15.6.0",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
@@ -16,6 +17,7 @@
     "build": "react-scripts build",
     "lint": "eslint .",
     "test": "CI=1 react-scripts test --env=jsdom --verbose",
+    "test:watch": "react-scripts test --env=jsdom --verbose",
     "eject": "react-scripts eject"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Row, Col, Input} from 'reactstrap'
+import {Row, Col, Input, Button} from 'reactstrap'
 import NewEntry from './NewEntry'
 import moneyInstance, {entry as entryFactory} from '../moneySetup'
 
@@ -29,36 +29,82 @@ class MoneyList extends Component {
         ? representation.byCategoryTotal
         : representation.byEntryTypeTotal
 
-    return Object.keys(representationByFilter).map(entry => (
-      <Row key={entry}>
-        <Col className="bold text-right" xs={6}>
-          {entry}
-        </Col>
-        <Col className="bold text-left" xs={6}>
-          {totalByFilter[entry]} (total)
-        </Col>
-        <hr />
-        <Col xs={12}>
-          {Object.entries(representationByFilter[entry]).map(singleEntry => (
-            <Row key={singleEntry}>
-              <Col className="text-right">{singleEntry[0]}:</Col>
-              <Col className="text-left">{singleEntry[1]}</Col>
-            </Row>
-          ))}
-        </Col>
-        <hr />
-      </Row>
-    ))
+    const {chosenMonth, chosenYear} = this.state
+    const date = `${chosenYear}-${chosenMonth}`
+
+    // eslint-disable-next-line arrow-body-style
+    return Object.keys(representationByFilter).map(entryCategoryName => {
+      return (
+        <Row key={entryCategoryName}>
+          <Col className="bold text-right" xs={6}>
+            {entryCategoryName}
+          </Col>
+          <Col className="bold text-left" xs={6}>
+            {totalByFilter[entryCategoryName]} (total)
+          </Col>
+          <hr />
+          <Col xs={12}>
+            {Object.entries(representationByFilter[entryCategoryName]).map(
+              singleEntry => {
+                const singleEntryName = singleEntry[0]
+                const singleEntryProperties = singleEntry[1]
+
+                return (
+                  <Row key={singleEntryName}>
+                    <Col xs={6} className="text-right">
+                      {singleEntryName}:
+                    </Col>
+                    <Col xs={6} className="text-left">
+                      {singleEntryProperties.total}
+                    </Col>
+                    <Col xs={12}>
+                      {singleEntryProperties.entries.map(specificEntry => (
+                        <Row>
+                          <Col xs={6} className="text-right">
+                            {specificEntry.payment}
+                          </Col>
+                          <Col xs={6} className="text-left">
+                            <Button
+                              // eslint-disable-next-line react/jsx-no-bind
+                              onClick={this.removeEntry.bind(
+                                this,
+                                singleEntryName,
+                                specificEntry.id,
+                                date,
+                                entryCategoryName,
+                              )}
+                            >
+                              DELETE
+                            </Button>
+                          </Col>
+                        </Row>
+                      ))}
+                    </Col>
+                  </Row>
+                )
+              },
+            )},
+          </Col>
+          <hr />
+        </Row>
+      )
+    })
   }
 
   addEntry = entry => {
-    console.log('entry', entry)
     const {year, month, category, name, price, type} = entry
     moneyInstance.add(entryFactory(year, month, category, name, price, type))
     this.setState({
       representation: moneyInstance.getRepresentation(year, month),
       yearsWithMonths: moneyInstance.getYearsWithMonths(),
     })
+  }
+
+  removeEntry = (entryName, id, date, category) => {
+    moneyInstance.remove(entryName, id, date, category)
+    this.setState(({chosenMonth, chosenYear}) => ({
+      representation: moneyInstance.getRepresentation(chosenYear, chosenMonth),
+    }))
   }
 
   selectDate = event => {
@@ -85,7 +131,6 @@ class MoneyList extends Component {
           chosenYear && chosenMonth
             ? moneyInstance.getRepresentation(chosenYear, chosenMonth)
             : null
-        console.log('MONEY REPRESENTATION', representation)
 
         this.setState({representation})
       },

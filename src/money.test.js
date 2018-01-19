@@ -49,7 +49,7 @@ describe('money', () => {
       },
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should add two single entries to the same category', () => {
@@ -63,7 +63,7 @@ describe('money', () => {
       potato: [{id: 0, payment: 10, type: EntryTypes.ONE_TIME}],
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should make array of two entries with the same name', () => {
@@ -79,7 +79,7 @@ describe('money', () => {
       ],
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should parse price that is a string', () => {
@@ -93,7 +93,7 @@ describe('money', () => {
       },
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should remove entry', () => {
@@ -108,7 +108,24 @@ describe('money', () => {
       tomato: [{id: 1, payment: 5, type: EntryTypes.FIXED}],
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
+  })
+
+  it('should remove entry and category when it does not contain any entries', () => {
+    const money = moneyFactory()
+    money.add(entry(Categories.GROCERY, 'tomato', '5', EntryTypes.FIXED, 1))
+    money.add(entry(Categories.STUFF, 'ps4', '1000', EntryTypes.FIXED, 2))
+
+    money.remove('tomato', 1, DEFAULT_DATE, Categories.GROCERY)
+
+    const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)
+    const expected = {
+      [Categories.STUFF]: {
+        ps4: [{id: 2, payment: 1000, type: EntryTypes.FIXED}],
+      },
+    }
+
+    assert.deepStrictEqual(actual, expected)
   })
 })
 
@@ -124,12 +141,21 @@ describe('money representation', () => {
 
     const expected = {
       [Categories.GROCERY]: {
-        kiwi: 17,
-        tomato: 5,
+        kiwi: {
+          total: 17,
+          entries: [
+            {payment: 5, type: EntryTypes.FIXED, id: 0},
+            {payment: 12, type: EntryTypes.FIXED, id: 0},
+          ],
+        },
+        tomato: {
+          total: 5,
+          entries: [{payment: 5, type: EntryTypes.FIXED, id: 0}],
+        },
       },
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should calculate total per group by category', () => {
@@ -147,7 +173,7 @@ describe('money representation', () => {
       [Categories.STUFF]: 400 + 1100,
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should group by entry type with calculated total payment', () => {
@@ -162,16 +188,42 @@ describe('money representation', () => {
       .byEntryType
     const expected = {
       [EntryTypes.FIXED]: {
-        kiwi: 17,
+        kiwi: {
+          total: 17,
+          entries: [
+            {entryKey: 'kiwi', payment: 5, type: EntryTypes.FIXED, id: 0},
+            {entryKey: 'kiwi', payment: 12, type: EntryTypes.FIXED, id: 0},
+          ],
+        },
       },
       [EntryTypes.ONE_TIME]: {
-        ps4pro: 400,
-        tv: 1100,
-        kiwi: 512,
+        ps4pro: {
+          total: 400,
+          entries: [
+            {
+              entryKey: 'ps4pro',
+              payment: 400,
+              type: EntryTypes.ONE_TIME,
+              id: 0,
+            },
+          ],
+        },
+        tv: {
+          total: 1100,
+          entries: [
+            {entryKey: 'tv', payment: 1100, type: EntryTypes.ONE_TIME, id: 0},
+          ],
+        },
+        kiwi: {
+          total: 512,
+          entries: [
+            {entryKey: 'kiwi', payment: 512, type: EntryTypes.ONE_TIME, id: 0},
+          ],
+        },
       },
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should calculate total per group by entry', () => {
@@ -189,7 +241,7 @@ describe('money representation', () => {
       [EntryTypes.ONE_TIME]: 512 + 400 + 1100,
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 
   it('should return empty data when nothing is added', () => {
@@ -197,10 +249,10 @@ describe('money representation', () => {
     assert.equal(actual.revenue, 0)
     assert.equal(actual.savings, 0)
     assert.equal(actual.expenses, 0)
-    assert.deepEqual(actual.byCategory, {})
-    assert.deepEqual(actual.byCategoryTotal, {})
-    assert.deepEqual(actual.byEntryType, {})
-    assert.deepEqual(actual.byEntryTypeTotal, {})
+    assert.deepStrictEqual(actual.byCategory, {})
+    assert.deepStrictEqual(actual.byCategoryTotal, {})
+    assert.deepStrictEqual(actual.byEntryType, {})
+    assert.deepStrictEqual(actual.byEntryTypeTotal, {})
   })
 
   it('should return empty data when only revenue is added', () => {
@@ -212,10 +264,10 @@ describe('money representation', () => {
     assert.equal(actual.revenue, 5000)
     assert.equal(actual.savings, 5000)
     assert.equal(actual.expenses, 0)
-    assert.deepEqual(actual.byCategory, {})
-    assert.deepEqual(actual.byCategoryTotal, {})
-    assert.deepEqual(actual.byEntryType, {})
-    assert.deepEqual(actual.byEntryTypeTotal, {})
+    assert.deepStrictEqual(actual.byCategory, {})
+    assert.deepStrictEqual(actual.byCategoryTotal, {})
+    assert.deepStrictEqual(actual.byEntryType, {})
+    assert.deepStrictEqual(actual.byEntryTypeTotal, {})
   })
 
   it('should made correct calculations when only groupState is added', () => {
@@ -231,10 +283,10 @@ describe('money representation', () => {
     assert.equal(actual.revenue, 0)
     assert.equal(actual.savings, -5)
     assert.equal(actual.expenses, 5)
-    assert.deepEqual(actual.byCategoryTotal, {
+    assert.deepStrictEqual(actual.byCategoryTotal, {
       GROCERY: 5,
     })
-    assert.deepEqual(actual.byEntryTypeTotal, {
+    assert.deepStrictEqual(actual.byEntryTypeTotal, {
       FIXED: 5,
     })
   })
@@ -277,7 +329,7 @@ describe('money representation', () => {
 
   it('should provide standard entry types', () => {
     const money = moneyFactory()
-    assert.deepEqual(money.entryTypes, {
+    assert.deepStrictEqual(money.entryTypes, {
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
     })
@@ -290,7 +342,7 @@ describe('money representation', () => {
         RARE: 'RARE',
       },
     )
-    assert.deepEqual(money.entryTypes, {
+    assert.deepStrictEqual(money.entryTypes, {
       RARE: 'RARE',
       FIXED: 'FIXED',
       ONE_TIME: 'ONE_TIME',
@@ -315,6 +367,6 @@ describe('money representation', () => {
       2016: ['12'],
     }
 
-    assert.deepEqual(actual, expected)
+    assert.deepStrictEqual(actual, expected)
   })
 })
