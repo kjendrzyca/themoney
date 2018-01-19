@@ -116,6 +116,7 @@ class MoneyList extends Component {
       this.setState({
         chosenYear: propertyValue,
         chosenMonth: '',
+        representation: null,
       })
 
       return
