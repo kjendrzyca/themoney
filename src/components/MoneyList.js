@@ -82,7 +82,7 @@ class MoneyList extends Component {
                   </Row>
                 )
               },
-            )},
+            )}
           </Col>
           <hr />
         </Row>
@@ -94,6 +94,8 @@ class MoneyList extends Component {
     const {year, month, category, name, price, type} = entry
     moneyInstance.add(entryFactory(year, month, category, name, price, type))
     this.setState({
+      chosenMonth: month,
+      chosenYear: year,
       representation: moneyInstance.getRepresentation(year, month),
       yearsWithMonths: moneyInstance.getYearsWithMonths(),
     })

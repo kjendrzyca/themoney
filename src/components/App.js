@@ -28,7 +28,7 @@ class App extends Component {
 
     return (
       <div className="App">
-        <Navbar light expand={false} sticky="top">
+        <Navbar className="app-navbar" light expand={false} sticky="top">
           <NavbarBrand href="/">The Money</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>

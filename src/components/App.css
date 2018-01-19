@@ -32,3 +32,7 @@
 .bold {
   font-weight: bold;
 }
+
+.app-navbar {
+  background-color: beige;
+}
