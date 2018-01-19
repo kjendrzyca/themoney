@@ -71,7 +71,6 @@ class MoneyList extends Component {
                                 singleEntryName,
                                 specificEntry.id,
                                 date,
-                                entryCategoryName,
                               )}
                             >
                               DELETE
@@ -100,8 +99,8 @@ class MoneyList extends Component {
     })
   }
 
-  removeEntry = (entryName, id, date, category) => {
-    moneyInstance.remove(entryName, id, date, category)
+  removeEntry = (entryName, id, date) => {
+    moneyInstance.remove(entryName, id, date)
     this.setState(({chosenMonth, chosenYear}) => ({
       representation: moneyInstance.getRepresentation(chosenYear, chosenMonth),
     }))

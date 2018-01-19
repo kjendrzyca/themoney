@@ -51,19 +51,15 @@ function moneyFactory(initialState = {}, entryTypes) {
 
       previousState.groupsState = newGroupsState
     },
-    remove: (entryName, id, date, category) => {
+    remove: (entryName, id, date) => {
       const newGroupsState = Object.keys(state[date].groupsState).reduce(
         (categoryAcc, nextCategoryKey) => {
           const newCategoriesState = Object.keys(
             state[date].groupsState[nextCategoryKey],
           ).reduce((entryAcc, nextEntryKey) => {
-            const categoryMatches = nextCategoryKey === category
-
-            const newEntryState = !categoryMatches
-              ? state[date].groupsState[nextCategoryKey][nextEntryKey]
-              : state[date].groupsState[nextCategoryKey][nextEntryKey].filter(
-                  element => element.id !== id,
-                )
+            const newEntryState = state[date].groupsState[nextCategoryKey][
+              nextEntryKey
+            ].filter(element => element.id !== id)
 
             if (newEntryState.length) {
               return {
