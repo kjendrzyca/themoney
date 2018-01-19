@@ -52,11 +52,42 @@ function moneyFactory(initialState = {}, entryTypes) {
       previousState.groupsState = newGroupsState
     },
     remove: (entryName, id, date, category) => {
-      state[date].groupsState[category][entryName] = [
-        ...state[date].groupsState[category][entryName].filter(
-          element => element.id !== id,
-        ),
-      ]
+      const newGroupsState = Object.keys(state[date].groupsState).reduce(
+        (categoryAcc, nextCategoryKey) => {
+          const newCategoriesState = Object.keys(
+            state[date].groupsState[nextCategoryKey],
+          ).reduce((entryAcc, nextEntryKey) => {
+            const categoryMatches = nextCategoryKey === category
+
+            const newEntryState = !categoryMatches
+              ? state[date].groupsState[nextCategoryKey][nextEntryKey]
+              : state[date].groupsState[nextCategoryKey][nextEntryKey].filter(
+                  element => element.id !== id,
+                )
+
+            if (newEntryState.length) {
+              return {
+                ...entryAcc,
+                [nextEntryKey]: newEntryState,
+              }
+            }
+
+            return entryAcc
+          }, {})
+
+          if (Object.keys(newCategoriesState).length !== 0) {
+            return {
+              ...categoryAcc,
+              [nextCategoryKey]: newCategoriesState,
+            }
+          }
+
+          return categoryAcc
+        },
+        {},
+      )
+
+      state[date].groupsState = newGroupsState
     },
     getAll: (year, month) => state[`${year}-${month}`].groupsState,
     getRepresentation: (year, month) => {

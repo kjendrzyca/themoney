@@ -104,9 +104,25 @@ describe('money', () => {
     money.remove('tomato', 2, DEFAULT_DATE, Categories.GROCERY)
 
     const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)[Categories.GROCERY]
-
     const expected = {
       tomato: [{id: 1, payment: 5, type: EntryTypes.FIXED}],
+    }
+
+    assert.deepStrictEqual(actual, expected)
+  })
+
+  it('should remove entry and category when it does not contain any entries', () => {
+    const money = moneyFactory()
+    money.add(entry(Categories.GROCERY, 'tomato', '5', EntryTypes.FIXED, 1))
+    money.add(entry(Categories.STUFF, 'ps4', '1000', EntryTypes.FIXED, 2))
+
+    money.remove('tomato', 1, DEFAULT_DATE, Categories.GROCERY)
+
+    const actual = money.getAll(DEFAULT_YEAR, DEFAULT_MONTH)
+    const expected = {
+      [Categories.STUFF]: {
+        ps4: [{id: 2, payment: 1000, type: EntryTypes.FIXED}],
+      },
     }
 
     assert.deepStrictEqual(actual, expected)
