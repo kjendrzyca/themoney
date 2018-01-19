@@ -93,7 +93,7 @@ Instant visualization of your spending habits.
 1. ~~handling different months~~
 1. ~~parse price to number always or throw error~~
 1. updating entry
-1. deleting entry
+1. ~~deleting entry~~
 1. locking a month
 1. figure out how to add revenue per month
 1. year/half-year/on-demand summary
@@ -115,6 +115,6 @@ Level 2
 Level 3
 1. my friends can use it
 1. authentication/authorization/security, all of the clever stuff (yes, I know, it should be there from the beginning)
-  
+
 # Credits
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
