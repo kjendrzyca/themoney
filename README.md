@@ -99,6 +99,7 @@ Instant visualization of your spending habits.
 1. year/half-year/on-demand summary
 1. rename category or entry type (id instead of hardcoded value?)
 1. add list of single entries to each group in data representation (per entry type also?)
+1. add possibility to calculate monthy expenses for chosen entry (for example, how much do I pay for beer each month)
 
 # What "finished" means
 
